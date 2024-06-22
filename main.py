@@ -22,7 +22,11 @@ class DataManager:
         keys = ["City", "Place", "User", "Amenity", "Review"]
         try:
             with open('data.json', 'r') as file:
-                data = json.loads(file.read())
+                data = file.read()
+                if any(data):
+                    data = json.loads(data)
+                else:
+                    data = dict()
             for item in keys:
                 if item not in data:
                     data[item] = dict()
@@ -34,6 +38,34 @@ class DataManager:
                 for item in keys:
                     data[item] = dict()
                 file.write(json.dumps(data, indent=4))
+
+
+class User:
+    """The User Class"""
+    def __init__(self, email: str, password: str, first_name: str, last_name: str):
+        if User.validate_user_mail(email):
+            self.id = str(uuid4())
+            self.email = email.lower()
+            self.password = password
+            self.first_name = first_name.capitalize()
+            self.last_name = last_name.capitalize()
+            self.host_places = []
+            self.reviews = []
+            self.created_at = datetime.now().isoformat()
+            self.updated_at = datetime.now().isoformat()
+            DataManager.save_new_item(self)
+        else:
+            print("User with this email already exists")
+
+    @staticmethod
+    def validate_user_mail(email):
+        with open('data.json', 'r') as file:
+            data = json.loads(file.read())
+            users = data['User']
+            for userdata in users.values():
+                if userdata['email'] == email.lower():
+                    return False
+            return True
 
 
 class Country:
