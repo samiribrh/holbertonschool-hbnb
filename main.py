@@ -84,6 +84,16 @@ class Validator:
                 return False
             return True
 
+    @staticmethod
+    def validate_amenity(amenity: str):
+        """If amenity not exists return true"""
+        with open('data.json', 'r') as file:
+            data = json.loads(file.read())
+            amenities = data['Amenity']
+            if amenity.lower() not in amenities:
+                return True
+            return False
+
 
 class DataManager:
     """The DataManager class provides methods for managing database"""
@@ -212,6 +222,19 @@ class Review:
             print("User not valid")
 
 
+class Amenity:
+    """The Amenity Class"""
+    def __init__(self, name: str):
+        if Validator.validate_amenity(name):
+            self.id = str(uuid4())
+            self.name = name.lower()
+            self.created_at = datetime.now().isoformat()
+            self.updated_at = datetime.now().isoformat()
+            DataManager.save_new_item(self)
+        else:
+            print("Amenity already exists")
+
+
 class Country:
     """The Country Class"""
     def __init__(self, id: str, name: str):
@@ -241,9 +264,3 @@ class City:
 
 if __name__ == '__main__':
     DataManager.initialize_file()
-    # Bak = City("Baku", "Az")
-    # User1 = User("samir@gmail.com", "password", "Samir", "Ibrahim")
-    # place1 = Place("Kazimin Mekani", "Gozel yer", "Bineqedi no 26", "341941b3-c4dc-4548-bf75-c801134cdb94", 3.45, 4.57, "69cf24f2-4aa4-4129-b1e5-2bc8f5ea3859", 5, 3, 45, 4)
-    # User2 = User("memmed2gmail.com", "1234", "Memmed", "Sultanov")
-    # review1 = Review("Gozel yerdi", 4.5, "f1dd8b69-dcfb-4b92-b31a-7db7de0ffc9e", "8a393759-9a3e-4916-8c90-596c8e2c006d")
-
