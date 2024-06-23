@@ -1,5 +1,8 @@
 import json
 import re
+from main import *
+filename = 'data.json'
+countryfile = 'countries.json'
 
 
 class Validator:
@@ -9,7 +12,7 @@ class Validator:
         """Validates user mail"""
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if re.match(email_regex, email) is not None:
-            with open('data.json', 'r') as file:
+            with open(filename, 'r') as file:
                 data = json.loads(file.read())
                 users = data['User']
                 for userdata in users.values():
@@ -21,7 +24,7 @@ class Validator:
     @staticmethod
     def validate_user_by_id(userid: str):
         """Validates user by its id"""
-        with open('data.json', 'r') as file:
+        with open(filename, 'r') as file:
             data = json.loads(file.read())
             users = data['User']
             if userid not in users:
@@ -31,7 +34,7 @@ class Validator:
     @staticmethod
     def validate_address(address: str):
         """Validate address by str"""
-        with open('data.json', 'r') as file:
+        with open(filename, 'r') as file:
             data = json.loads(file.read())
             places = data['Place']
             for placedata in places.values():
@@ -42,7 +45,7 @@ class Validator:
     @staticmethod
     def validate_city(city: str):
         """Validates city by its id"""
-        with open('data.json', 'r') as file:
+        with open(filename, 'r') as file:
             data = json.loads(file.read())
             cities = data['City']
             if city not in cities:
@@ -52,7 +55,7 @@ class Validator:
     @staticmethod
     def validate_country(country: str):
         """Function for validating a country"""
-        with open('countries.json', 'r') as file:
+        with open(countryfile, 'r') as file:
             data = json.loads(file.read())
             if country.upper() not in data:
                 return False
@@ -61,7 +64,7 @@ class Validator:
     @staticmethod
     def validate_city_in_country(city: str, country: str):
         """Validates city by its name and country name"""
-        with open('data.json', 'r') as file:
+        with open(filename, 'r') as file:
             data = json.loads(file.read())
             cities = data["City"]
             for citya in cities.values():
@@ -71,7 +74,7 @@ class Validator:
 
     @staticmethod
     def validate_user_place(user: str, place: str):
-        with open('data.json', 'r') as file:
+        with open(filename, 'r') as file:
             data = json.loads(file.read())
             users = data['User']
             if user not in users:
@@ -87,7 +90,7 @@ class Validator:
     @staticmethod
     def validate_user_owns_place(user: str, place: str):
         """Function for validating user owns place"""
-        with open('data.json', 'r') as file:
+        with open(filename, 'r') as file:
             data = json.loads(file.read())
             ouruser = data['User'][user]
             if place in ouruser["host_places"]:
@@ -97,7 +100,7 @@ class Validator:
     @staticmethod
     def validate_amenity(amenity: str):
         """If amenity not exists return true"""
-        with open('data.json', 'r') as file:
+        with open(filename, 'r') as file:
             data = json.loads(file.read())
             amenities = data['Amenity']
             for amenitydata in amenities.values():
@@ -108,9 +111,9 @@ class Validator:
     @staticmethod
     def check_amenity_in_place(amenity: str, place: str):
         """Function for validating amenity inside place"""
-        with open('data.json', 'r') as file:
+        with open(filename, 'r') as file:
             data = json.loads(file.read())
             ourplace = data['Place'][place]
             if amenity in ourplace['amenities']:
-                return True
-        return False
+                return False
+        return True
