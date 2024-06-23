@@ -1,8 +1,9 @@
 import json
 import re
 from main import *
-filename = 'data.json'
-countryfile = 'countries.json'
+
+filename = 'data/data.json'
+countryfile = 'data/countries.json'
 
 
 class Validator:

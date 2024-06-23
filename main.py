@@ -1,9 +1,10 @@
 """Module containing entities or classes for HBnB project"""
 from classes import *
 from validators import *
-filename = 'data.json'
-countryfile = 'countries.json'
 import json
+
+filename = 'data/data.json'
+countryfile = 'data/countries.json'
 
 
 class DataManager:
@@ -107,6 +108,5 @@ if __name__ == '__main__':
     DataManager.initialize_file()
     with open('datacopy.json', 'r') as file:
         data = json.loads(file.read())
-    with open('data.json', 'w') as file:
+    with open('data/data.json', 'w') as file:
         file.write(json.dumps(data, indent=4))
-    DataManager.delete("a2562180-7f8a-45b5-b369-1af2d60e6695", "City")
