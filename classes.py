@@ -187,7 +187,6 @@ class City:
             for place in places.values():
                 if place['city'] == cityid:
                     data = Place.delete(place['id'])
-            DataManager.save_to_file(data, filename)
             del data['City'][cityid]
             DataManager.save_to_file(data, filename)
         return data
