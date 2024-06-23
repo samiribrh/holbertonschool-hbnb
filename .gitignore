@@ -4,4 +4,5 @@
 /Services/__pycache__
 /Services/Validators/__pycache__
 /Data
-/env
+env/
+.idea/
