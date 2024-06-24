@@ -1,8 +1,5 @@
 # File to exclude unnecessary or sensitive files from GitHub
-/__pycache__
-/Model/__pycache__
-/Services/__pycache__
-/Services/Validators/__pycache__
-/Data
+__pycache__/
+Data/
 env/
 .idea/
