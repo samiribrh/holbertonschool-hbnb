@@ -1,5 +1,5 @@
 """Module containing Country class"""
-from Services.datamanager import DataManager
+from Services.DataManipulation.datamanager import DataManager
 
 
 class Country:

@@ -1,6 +1,6 @@
 """Module containing Amenity class"""
 from Services.Validators.validators import *
-from Services.datamanager import DataManager
+from Services.DataManipulation.datamanager import DataManager
 from env.env import datafile
 from uuid import uuid4
 from datetime import datetime
@@ -24,5 +24,9 @@ class Amenity:
         with open(datafile, 'r') as file:
             data = json.loads(file.read())
             del data['Amenity'][amenityid]
+            places = data['Place']
+            for place in places.values():
+                if any(place['amenities']) and amenityid in place['amenities']:
+                    place['amenities'].remove(amenityid)
             DataManager.save_to_file(data, datafile)
         return data

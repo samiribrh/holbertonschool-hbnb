@@ -1,5 +1,10 @@
 """Module for CRUD operations."""
-from datamanager import DataManager
+from Services.DataManipulation.datamanager import DataManager
+from Model.amenity import Amenity
+from Model.city import City
+from Model.country import Country
+from Model.place import Place
+from Model.review import Review
 from env.env import datafile
 import json
 

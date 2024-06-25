@@ -1,6 +1,6 @@
 """Module containing Place class"""
 from Services.Validators.validators import *
-from Services.datamanager import DataManager
+from Services.DataManipulation.datamanager import DataManager
 from Model.review import Review
 from env.env import datafile
 from uuid import uuid4
