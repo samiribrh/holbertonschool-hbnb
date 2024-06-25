@@ -2,7 +2,7 @@
 from Services.DataManipulation.crud import Crud
 
 if __name__ == '__main__':
-    from Services.initializer import initialize_file
+    from Services.Initializer.initializer import initialize_file
     import json
 
     initialize_file()
