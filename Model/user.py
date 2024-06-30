@@ -10,7 +10,7 @@ from env.env import datafile
 
 class User:
     """The User Class"""
-    def __init__(self, email: str, password: str, first_name: str, last_name: str):
+    def __init__(self, email: str, password: str, first_name: str, last_name: str, is_admin=False):
         """User class constructor"""
         mailcheck, status = Validator.validate_user_mail(email)
         if mailcheck:
@@ -23,6 +23,7 @@ class User:
             self.reviews = []
             self.created_at = datetime.now().isoformat()
             self.updated_at = datetime.now().isoformat()
+            self.is_admin = is_admin
             DataManager.save_new_item(self)
         else:
             if status == 1:

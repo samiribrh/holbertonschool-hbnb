@@ -14,7 +14,6 @@ if __name__ == '__main__':
     def index():
         return "Hi!"
 
-    app.run(port=5000, debug=True)
 
     initialize_file()
     with open('Data/datacopy.json', 'r') as file:
