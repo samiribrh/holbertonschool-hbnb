@@ -1,5 +1,6 @@
 """Module containing City class"""
 from Services.Validators.validators import *
+from Services.Validators.exceptions import CityAlreadyExistsError, InvalidCountryError
 from Services.DataManipulation.datamanager import DataManager
 from Model.place import Place
 from env.env import datafile
@@ -20,9 +21,9 @@ class City:
                 self.updated_at = datetime.now().isoformat()
                 DataManager.save_new_item(self)
             else:
-                print('City already exists')
+                raise CityAlreadyExistsError("City already exists")
         else:
-            print("Country is not valid")
+            raise InvalidCountryError('Invalid country value')
 
     @staticmethod
     def delete(cityid):

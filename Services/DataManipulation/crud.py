@@ -7,6 +7,7 @@ from Model.place import Place
 from Model.review import Review
 from Model.user import User
 from env.env import datafile
+from datetime import datetime
 import json
 
 
@@ -30,6 +31,7 @@ class Crud:
             if entity_id not in data[entity_type]:
                 return 404
             data[entity_type][entity_id] = newdata
+            data[entity_type][entity_id]['updated_at'] = datetime.now().isoformat()
             DataManager.save_to_file(data, datafile)
 
     @staticmethod
