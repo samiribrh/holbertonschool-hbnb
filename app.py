@@ -1,10 +1,10 @@
 """Module containing main app for HBnB project"""
-from Blueprints.definer import define
+from Blueprints.definer import define_blueprints
 from flask import Flask
 import json
 
 app = Flask(__name__)
-app = define(app)
+app = define_blueprints(app)
 
 if __name__ == '__main__':
     from Services.Initializer.initializer import initialize_file
@@ -14,6 +14,7 @@ if __name__ == '__main__':
     def index():
         return "Hi!"
 
+    app.run(port=5000, debug=True)
 
     initialize_file()
     with open('Data/datacopy.json', 'r') as file:
