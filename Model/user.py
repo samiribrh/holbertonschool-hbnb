@@ -26,9 +26,9 @@ class User:
             DataManager.save_new_item(self)
         else:
             if status == 1:
-                print("Email format is not correct")
+                raise ValueError("Email format is not correct")
             else:
-                print("User with this email already exists")
+                raise ValueError("User with this email already exists")
 
     @staticmethod
     def delete(deletionid):
