@@ -2,7 +2,7 @@
 from Services.DataManipulation.crud import Crud
 from Model.country import Country
 from env.env import countryfile, datafile
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 import json
 
 countries_bp = Blueprint('countries', __name__)
@@ -39,4 +39,3 @@ def get_cities(country_code):
             if info['country'] == country_code:
                 cities_dict[city] = cities[city]
     return jsonify(cities_dict)
-
