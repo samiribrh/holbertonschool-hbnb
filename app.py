@@ -1,5 +1,6 @@
 """Module containing main app for HBnB project"""
-from Blueprints.definer import define_blueprints
+from Services.Initializer.define_blueprints import define_blueprints
+from Services.Initializer.initializer import initialize_file
 from flask import Flask
 import json
 
@@ -7,9 +8,6 @@ app = Flask(__name__)
 app = define_blueprints(app)
 
 if __name__ == '__main__':
-    from Services.Initializer.initializer import initialize_file
-    from Services.DataManipulation.crud import Crud
-
     @app.route('/', methods=['GET'])
     def index():
         return "Hi!"

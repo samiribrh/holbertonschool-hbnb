@@ -7,6 +7,15 @@ import re
 class Validator:
     """The CLass for Validator Methods"""
     @staticmethod
+    def is_positive_int(value):
+        """Validates the value is a positive integer"""
+        if not isinstance(value, int):
+            return False
+        if value < 0:
+            return False
+        return True
+
+    @staticmethod
     def validate_user_mail(email: str):
         """Validates user mail"""
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
@@ -72,7 +81,17 @@ class Validator:
             return True
 
     @staticmethod
+    def validate_coordinates(latitude: float, longitude: float):
+        """Validates latitude and longitude"""
+        if latitude < -90 or latitude > 90:
+            return False
+        if longitude < -180 or longitude > 180:
+            return False
+        return True
+
+    @staticmethod
     def validate_user_place(user: str, place: str):
+        """Validates user place"""
         with open(datafile, 'r') as file:
             data = json.loads(file.read())
             users = data['User']
@@ -105,6 +124,16 @@ class Validator:
             for amenitydata in amenities.values():
                 if amenitydata['name'] == amenity.lower():
                     return False
+            return True
+
+    @staticmethod
+    def check_valid_amenity(amenity: str):
+        """Function for validating amenity"""
+        with open(datafile, 'r') as file:
+            data = json.loads(file.read())
+            amenities = data['Amenity']
+            if amenity not in amenities:
+                return False
             return True
 
     @staticmethod

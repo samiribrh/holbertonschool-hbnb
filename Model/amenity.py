@@ -1,5 +1,6 @@
 """Module containing Amenity class"""
 from Services.Validators.validators import *
+from Services.Validators.exceptions import AmenityAlreadyExistsError
 from Services.DataManipulation.datamanager import DataManager
 from env.env import datafile
 from uuid import uuid4
@@ -16,7 +17,7 @@ class Amenity:
             self.updated_at = datetime.now().isoformat()
             DataManager.save_new_item(self)
         else:
-            print("Amenity already exists")
+            raise AmenityAlreadyExistsError("Amenity already exists")
 
     @staticmethod
     def delete(amenityid):

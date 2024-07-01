@@ -1,5 +1,8 @@
 """Module containing Place class"""
 from Services.Validators.validators import *
+from Services.Validators.exceptions import (HostNotFound, CityNotFound,
+                                            PlaceAlreadyExistsError, AmenityNotFound,
+                                            ValidNumberError)
 from Services.DataManipulation.datamanager import DataManager
 from Model.review import Review
 from env.env import datafile
@@ -11,8 +14,20 @@ class Place:
     """The Place Class"""
 
     def __init__(self, name: str, description: str, address: str, city: str, latitude: float, longitude: float,
-                 host: str, num_of_rooms: int, bathrooms: int, price: float, max_guests: int):
+                 host: str, num_of_rooms: int, bathrooms: int, price: float, max_guests: int, amenities=None):
         """Place constructor"""
+        if amenities is None:
+            amenities = []
+        for amenity in amenities:
+            if not Validator.check_valid_amenity(amenity):
+                raise AmenityNotFound("Amenity Not Found")
+        if not Validator.validate_coordinates(latitude, longitude):
+            raise ValueError("Latitude and Longitude are not valid")
+        if not (Validator.is_positive_int(num_of_rooms), Validator.is_positive_int(bathrooms),
+                Validator.is_positive_int(max_guests)):
+            raise ValidNumberError("num_of_rooms, bathrooms, max_guests should be positive integers")
+        if not ((isinstance(price, int) or isinstance(price, float)) and (price >= 0)):
+            raise ValidNumberError("Price should be positive integer")
         if Validator.validate_address(address):
             if Validator.validate_city(city):
                 if Validator.validate_user_by_id(host):
@@ -28,18 +43,18 @@ class Place:
                     self.bathrooms = bathrooms
                     self.price = price
                     self.max_guests = max_guests
-                    self.amenities = []
+                    self.amenities = amenities
                     self.reviews = []
                     self.created_at = datetime.now().isoformat()
                     self.updated_at = datetime.now().isoformat()
                     DataManager.save_new_item(self)
                     DataManager.add_host_place(self.host, self.id)
                 else:
-                    print("Host not found")
+                    raise HostNotFound("Host not found")
             else:
-                print("City not valid")
+                raise CityNotFound("City not valid")
         else:
-            print("Place with this address already already exists")
+            raise PlaceAlreadyExistsError("Place with this address already exists")
 
     @staticmethod
     def delete(deletionid):
