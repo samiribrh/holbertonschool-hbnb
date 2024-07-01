@@ -136,3 +136,4 @@ def add_reviews(place_id):
         review = Review(feedback, rating, user, place_id)
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
+    return jsonify(review.__dict__), 201

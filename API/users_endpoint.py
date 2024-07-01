@@ -1,7 +1,9 @@
 """Module for user endpoint"""
 from Services.DataManipulation.crud import Crud
 from Model.user import User
+from env.env import datafile
 from flask import Blueprint, jsonify, request
+import json
 
 users_bp = Blueprint('users', __name__)
 
@@ -71,3 +73,20 @@ def delete_user(user_id):
     if status == 404:
         return jsonify({'error': 'User not found'}), 404
     return jsonify({'message': 'User deleted'}), 204
+
+
+@users_bp.route('/<user_id>/reviews', methods=['GET'])
+def get_reviews(user_id):
+    if not user_id:
+        return jsonify({'error': 'Missing data'}), 400
+    usrdata = Crud.get('User', user_id)
+    usrreviews = usrdata.get('reviews')
+    if not usrreviews:
+        return jsonify({'message': 'No review found'}), 200
+    with open(datafile, 'r') as file:
+        data = json.loads(file.read())
+    reviews = data['Review']
+    reviewstoreturn = dict()
+    for review in usrreviews:
+        reviewstoreturn[review] = reviews.get(review)
+    return jsonify(reviewstoreturn), 200
