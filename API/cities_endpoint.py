@@ -10,7 +10,7 @@ cities_bp = Blueprint('cities', __name__)
 @cities_bp.route('/', methods=['GET'])
 def get_cities():
     data = Crud.get('City')
-    return jsonify(data)
+    return jsonify(data), 200
 
 
 @cities_bp.route('/<city_id>', methods=['GET'])
@@ -18,7 +18,7 @@ def get_city_by_id(city_id):
     data = Crud.get('City', city_id)
     if data is None:
         return jsonify({'error': 'City not found'}), 404
-    return jsonify(data)
+    return jsonify(data), 200
 
 
 @cities_bp.route('/', methods=['POST'])
@@ -45,6 +45,8 @@ def update_city(city_id):
     if not datatoupdate:
         return jsonify({'error': 'No data'}), 400
     data = Crud.get('City', city_id)
+    if data is None:
+        return jsonify({'error': 'City not found'}), 404
     data['name'] = datatoupdate.get('name')
     data['country'] = datatoupdate.get('country')
     if not (data['name'] or data['country']):

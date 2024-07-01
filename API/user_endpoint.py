@@ -11,7 +11,8 @@ def get_users():
     data = Crud.get('User')
     for spec in data.values():
         spec.pop('password')
-    return jsonify(data)
+        spec.pop('is_admin')
+    return jsonify(data), 200
 
 
 @users_bp.route('/<user_id>', methods=['GET'])
@@ -20,7 +21,8 @@ def get_user_by_id(user_id):
     if data is None:
         return jsonify({'error': 'User not found'}), 404
     data.pop('password')
-    return jsonify(data)
+    data.pop('is_admin')
+    return jsonify(data), 200
 
 
 @users_bp.route('/', methods=['POST'])
@@ -47,6 +49,8 @@ def update_user(user_id):
     if not datatoupdate:
         return jsonify({'error': 'No data'}), 400
     data = Crud.get('User', user_id)
+    if data is None:
+        return jsonify({'error': 'User not found'}), 404
     data['email'] = datatoupdate.get('email')
     data['password'] = datatoupdate.get('password')
     data['first_name'] = datatoupdate.get('first_name')

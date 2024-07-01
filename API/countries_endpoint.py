@@ -12,7 +12,7 @@ countries_bp = Blueprint('countries', __name__)
 def get_countries():
     with open(countryfile, 'r') as file:
         countries = json.loads(file.read())
-        return jsonify(countries)
+        return jsonify(countries), 200
 
 
 @countries_bp.route('/<country_code>', methods=['GET'])
@@ -22,7 +22,7 @@ def get_country(country_code):
         country = countries.get(country_code)
         if country is None:
             return jsonify({'error': 'No country found'}), 404
-        return jsonify(country)
+        return jsonify(country), 200
 
 
 @countries_bp.route('/<country_code>/cities', methods=['GET'])
@@ -38,4 +38,4 @@ def get_cities(country_code):
         for city, info in cities.items():
             if info['country'] == country_code:
                 cities_dict[city] = cities[city]
-    return jsonify(cities_dict)
+    return jsonify(cities_dict), 200
