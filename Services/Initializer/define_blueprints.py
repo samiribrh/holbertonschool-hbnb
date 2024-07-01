@@ -1,9 +1,11 @@
 """Module to define blueprints for Flask app"""
+from API import users_endpoint
 from API.users_endpoint import users_bp
 from API.countries_endpoint import countries_bp
 from API.cities_endpoint import cities_bp
 from API.amenities_endpoint import amenities_bp
 from API.places_endpoint import places_bp
+from API.reviews_endpoint import reviews_bp
 
 
 def define_blueprints(app):
@@ -21,5 +23,8 @@ def define_blueprints(app):
 
     # Places endpoint
     app.register_blueprint(places_bp, url_prefix='/places')
+
+    #
+    app.register_blueprint(reviews_bp, url_prefix='/reviews')
 
     return app

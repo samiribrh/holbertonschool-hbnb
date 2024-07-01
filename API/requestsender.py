@@ -1,14 +1,18 @@
 import requests
 
-place_id = "b26f0a72-1fdb-49d1-b2ad-33b95144e677"  # Replace with the actual place_id you want to delete
-url = f"http://127.0.0.1:5000/places/{place_id}"
+place_id = "e2ef60c6-95ff-4afb-bc5a-bf9f19603a2a"  # Replace with the actual place_id for which you want to fetch reviews
+url = f"http://127.0.0.1:5000/places/{place_id}/reviews"
 
-response = requests.delete(url)
+response = requests.get(url)
 
-if response.status_code == 204:  # Assuming 204 is the status code for a successful deletion
-    print("Place deleted successfully!")
-elif response.status_code == 404:
-    print("Place not found.")
+if response.status_code == 200:  # Assuming 200 is the status code for successful retrieval
+    reviews = response.json()
+    if reviews.get('message'):
+        print(reviews['message'])
+    else:
+        for review_id, review_data in reviews.items():
+            print(f"Review ID: {review_id}")
+            print(f"Review Data: {review_data}")
 else:
-    print(f"Failed to delete place. Status code: {response.status_code}")
+    print(f"Failed to fetch reviews. Status code: {response.status_code}")
     print(response.text)

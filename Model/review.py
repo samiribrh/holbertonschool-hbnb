@@ -10,6 +10,8 @@ class Review:
     """The Review Class"""
     def __init__(self, feedback: str, rating: float, user: str, place: str):
         """Review Class constructor"""
+        if not 0 <= rating <= 5:
+            raise ValueError("Rating must be between 0 and 5")
         if Validator.validate_user_by_id(user):
             if Validator.validate_user_place(user, place):
                 self.id = str(uuid4())
@@ -22,9 +24,9 @@ class Review:
                 DataManager.save_new_item(self)
                 DataManager.add_review(self.user, self.place, self.id)
             else:
-                print("Place not valid")
+                raise ValueError("Place not valid")
         else:
-            print("User not valid")
+            raise ValueError("User not valid")
 
     @staticmethod
     def delete(deletionid):

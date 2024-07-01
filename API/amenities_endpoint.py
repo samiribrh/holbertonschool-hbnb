@@ -1,6 +1,5 @@
 """Module for amenities endpoint"""
 from Services.DataManipulation.crud import Crud
-from Services.Validators.exceptions import AmenityAlreadyExistsError
 from Model.amenity import Amenity
 from flask import Blueprint, jsonify, request
 
@@ -29,8 +28,8 @@ def create_amenity():
         return jsonify({'error': 'Amenity name is required'}), 400
     try:
         amenity = Amenity(name)
-    except AmenityAlreadyExistsError:
-        return jsonify({'error': 'Amenity already exists'}), 400
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
     return jsonify(amenity.__dict__), 201
 
 

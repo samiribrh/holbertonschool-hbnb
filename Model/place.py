@@ -1,8 +1,5 @@
 """Module containing Place class"""
 from Services.Validators.validators import *
-from Services.Validators.exceptions import (HostNotFound, CityNotFound,
-                                            PlaceAlreadyExistsError, AmenityNotFound,
-                                            ValidNumberError)
 from Services.DataManipulation.datamanager import DataManager
 from Model.review import Review
 from env.env import datafile
@@ -20,14 +17,14 @@ class Place:
             amenities = []
         for amenity in amenities:
             if not Validator.check_valid_amenity(amenity):
-                raise AmenityNotFound("Amenity Not Found")
+                raise ValueError("Amenity Not Found")
         if not Validator.validate_coordinates(latitude, longitude):
             raise ValueError("Latitude and Longitude are not valid")
         if not (Validator.is_positive_int(num_of_rooms), Validator.is_positive_int(bathrooms),
                 Validator.is_positive_int(max_guests)):
-            raise ValidNumberError("num_of_rooms, bathrooms, max_guests should be positive integers")
+            raise ValueError("num_of_rooms, bathrooms, max_guests should be positive integers")
         if not ((isinstance(price, int) or isinstance(price, float)) and (price >= 0)):
-            raise ValidNumberError("Price should be positive integer")
+            raise ValueError("Price should be positive integer")
         if Validator.validate_address(address):
             if Validator.validate_city(city):
                 if Validator.validate_user_by_id(host):
@@ -50,11 +47,11 @@ class Place:
                     DataManager.save_new_item(self)
                     DataManager.add_host_place(self.host, self.id)
                 else:
-                    raise HostNotFound("Host not found")
+                    raise ValueError("Host not found")
             else:
-                raise CityNotFound("City not valid")
+                raise ValueError("City not valid")
         else:
-            raise PlaceAlreadyExistsError("Place with this address already exists")
+            raise ValueError("Place with this address already exists")
 
     @staticmethod
     def delete(deletionid):
