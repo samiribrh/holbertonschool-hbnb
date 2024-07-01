@@ -1,6 +1,7 @@
 """Module for user endpoint"""
 from Services.DataManipulation.crud import Crud
 from Services.Validators.exceptions import CityAlreadyExistsError, InvalidCountryError
+from Services.Validators.validators import Validator
 from Model.city import City
 from flask import Blueprint, jsonify, request
 
@@ -47,6 +48,8 @@ def update_city(city_id):
     data = Crud.get('City', city_id)
     if data is None:
         return jsonify({'error': 'City not found'}), 404
+    if not Validator.validate_country(datatoupdate.get('country')):
+        return jsonify({'error': 'Invalid country'}), 400
     data['name'] = datatoupdate.get('name')
     data['country'] = datatoupdate.get('country')
     if not (data['name'] or data['country']):
