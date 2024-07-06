@@ -1,50 +1,90 @@
 """Module for User class"""
-from Services.Validators.validators import *
 from Model.review import Review
-from Model.place import Place
-from Services.DataManipulation.datamanager import DataManager
+from Services.Validators.validators import Validator
+from Services.database import Base, get_session
+from sqlalchemy.orm import validates
+from sqlalchemy import Column, String, DateTime
 from uuid import uuid4
 from datetime import datetime
-from env.env import datafile
 
 
-class User:
+class User(Base):
     """The User Class"""
-    def __init__(self, email: str, password: str, first_name: str, last_name: str, is_admin=False):
-        """User class constructor"""
-        mailcheck, status = Validator.validate_user_mail(email)
-        if mailcheck:
-            self.id = str(uuid4())
-            self.email = email.lower()
-            self.password = password
-            self.first_name = first_name.capitalize()
-            self.last_name = last_name.capitalize()
-            self.host_places = []
-            self.reviews = []
-            self.created_at = datetime.now().isoformat()
-            self.updated_at = datetime.now().isoformat()
-            self.is_admin = is_admin
-            DataManager.save_new_item(self)
-        else:
+    __tablename__ = 'users'
+
+    id = Column(String(36), primary_key=True, default=lambda: uuid4())
+    email = Column(String(255), unique=True, nullable=False)
+    password = Column(String(255), nullable=False)
+    first_name = Column(String(255), nullable=False)
+    last_name = Column(String(255), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow(), nullable=False)
+
+    @validates('email')
+    def validate_email(self, key, value):
+        validated_email = value.lower()
+        mailcheck, status = Validator.validate_user_mail(validated_email)
+        if not mailcheck:
             if status == 1:
                 raise ValueError("Email format is not correct")
-            else:
+            elif status == 0:
                 raise ValueError("User with this email already exists")
+        return validated_email
+
+    @validates('password')
+    def validate_password(self, key, value):
+        import re
+
+        # Check if password is minimum 8 characters
+        if len(value) < 8:
+            raise ValueError("Password must be at least 8 characters")
+
+        # Check if password contains at least one uppercase letter
+        elif not re.search('[A-Z]', value):
+            raise ValueError("Password must contain at least one uppercase letter")
+
+        # Check if password contains at least one lowercase letter
+        elif not re.search('[a-z]', value):
+            raise ValueError("Password must contain at least one lowercase letter")
+
+        # Check if password contains at least one number
+        elif not re.search('[0-9]', value):
+            raise ValueError("Password must contain at least one number")
+        return value
+
+    @validates('first_name')
+    def validate_first_name(self, key, value):
+        validated_first_name = value.capitalize()
+        return validated_first_name
+
+    @validates('last_name')
+    def validate_last_name(self, key, value):
+        validated_last_name = value.capitalize()
+        return validated_last_name
 
     @staticmethod
-    def delete(deletionid):
-        """Method for deleting a user"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-        user = data['User'][deletionid]
-        hostplaces = user['host_places']
-        reviews = user['reviews']
-        for review in reviews:
-            data = Review.delete(review)
-        DataManager.save_to_file(data, datafile)
-        for hostplace in hostplaces:
-            data = Place.delete(hostplace)
-        DataManager.save_to_file(data, datafile)
-        del data['User'][deletionid]
-        DataManager.save_to_file(data, datafile)
-        return data
+    def delete(deletionid: str):
+        """Function for delete a user object"""
+        from Model.place import Place
+
+        session = get_session()
+        try:
+            usertodelete = session.query(User).filter(User.id == deletionid).one()
+            if not usertodelete:
+                raise ValueError("User does not exist")
+            places = session.query(Place).filter(Place.host == deletionid).all()
+            for place in places:
+                Place.delete(place.id)
+                session.commit()
+            reviews = session.query(Review).filter(Review.user == deletionid).all()
+            for review in reviews:
+                Review.delete(review.id)
+                session.commit()
+            session.delete(usertodelete)
+            session.commit()
+            return usertodelete
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()

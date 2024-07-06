@@ -1,32 +1,49 @@
 """Module containing Amenity class"""
-from Services.Validators.validators import *
-from Services.DataManipulation.datamanager import DataManager
-from env.env import datafile
+from Services.Validators.validators import Validator
+from Services.database import Base, get_session
+from sqlalchemy import Column, String, DateTime
+from sqlalchemy.orm import validates
 from uuid import uuid4
 from datetime import datetime
 
 
-class Amenity:
+class Amenity(Base):
     """The Amenity Class"""
-    def __init__(self, name: str):
-        if Validator.validate_amenity(name):
-            self.id = str(uuid4())
-            self.name = name.lower()
-            self.created_at = datetime.now().isoformat()
-            self.updated_at = datetime.now().isoformat()
-            DataManager.save_new_item(self)
-        else:
-            raise ValueError("Amenity already exists")
+    __tablename__ = 'amenities'
+
+    id = Column(String(36), primary_key=True, default=lambda: uuid4())
+    name = Column(String(255), unique=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.now(), nullable=False)
+    updated_at = Column(DateTime, default=datetime.now(), onupdate=datetime.now(), nullable=False)
+
+    @validates('name')
+    def validate_name(self, key, value):
+        if not value:
+            raise ValueError('Amenity name cannot be empty')
+        validated_name = ' '.join(word.capitalize() for word in value.split())
+        if Validator.validate_amenity(validated_name):
+            raise ValueError('Amenity already exists')
+        return validated_name
 
     @staticmethod
-    def delete(amenityid):
-        """Function to delete a Amenity from the database"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            del data['Amenity'][amenityid]
-            places = data['Place']
-            for place in places.values():
-                if any(place['amenities']) and amenityid in place['amenities']:
-                    place['amenities'].remove(amenityid)
-            DataManager.save_to_file(data, datafile)
-        return data
+    def delete(deletionid: str):
+        """Function to delete an Amenity from the database"""
+        from Model.place_amenity import PlaceAmenity
+
+        session = get_session()
+        try:
+            amenity_to_delete = session.query(Amenity).filter(Amenity.id == deletionid).one()
+            if not amenity_to_delete:
+                raise ValueError('Amenity does not exist')
+            amenity_place = session.query(PlaceAmenity).filter(PlaceAmenity.amenity_id == deletionid).all()
+            for amenityobj in amenity_place:
+                session.delete(amenityobj)
+                session.commit()
+            session.delete(amenity_to_delete)
+            session.commit()
+            return amenity_to_delete
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()

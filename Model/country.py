@@ -1,11 +1,14 @@
 """Module containing Country class"""
-from Services.DataManipulation.datamanager import DataManager
+from sqlalchemy import Column, VARCHAR, DateTime
+from Services.database import Base
+from datetime import datetime
 
 
-class Country:
+class Country(Base):
     """The Country Class"""
-    def __init__(self, id: str, name: str):
-        """Country constructor"""
-        self.id = id
-        self.name = name
-        DataManager.save_new_item(self)
+    __tablename__ = 'countries'
+
+    id = Column(VARCHAR(2), primary_key=True)
+    name = Column(VARCHAR(100), nullable=False, unique=True)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)

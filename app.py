@@ -1,21 +1,31 @@
 """Module containing main app for HBnB project"""
+from Model.amenity import Amenity
+from Model.place_amenity import PlaceAmenity
+from Model.city import City
+from Model.place import Place
+from Services.Initializer.initializer import initialize_services
 from Services.Initializer.define_blueprints import define_blueprints
-from Services.Initializer.initializer import initialize_file
+from Services.database import get_session
 from flask import Flask
-import json
 
 app = Flask(__name__)
 app = define_blueprints(app)
 
-if __name__ == '__main__':
+session = get_session()
+
+
+def main():
+    initialize_services()
+
     @app.route('/', methods=['GET'])
     def index():
         return "Hi!"
 
-    app.run(port=5000, debug=True)
 
-    initialize_file()
-    with open('Data/datacopy.json', 'r') as file:
-        data = json.loads(file.read())
-    with open('Data/data.json', 'w') as file:
-        file.write(json.dumps(data, indent=4))
+
+    # app.run(port=5000, debug=True)
+    #
+
+
+if __name__ == '__main__':
+    main()

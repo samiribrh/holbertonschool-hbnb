@@ -1,43 +1,59 @@
 """Module for Review Class"""
-from Services.Validators.validators import *
-from Services.DataManipulation.datamanager import DataManager
-from env.env import datafile
+from Services.Validators.validators import Validator
+from Services.database import Base, get_session
+from sqlalchemy import Column, String, Float, Text, DateTime
+from sqlalchemy.orm import validates
 from uuid import uuid4
 from datetime import datetime
 
 
-class Review:
+class Review(Base):
     """The Review Class"""
-    def __init__(self, feedback: str, rating: float, user: str, place: str):
-        """Review Class constructor"""
-        if not 0 <= rating <= 5:
+    __tablename__ = 'reviews'
+
+    id = Column(String(36), primary_key=True, default=lambda: uuid4())
+    rating = Column(Float, nullable=False)
+    feedback = Column(Text)
+    user = Column(String(36), nullable=False)
+    place = Column(String(36), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
+    updated_at = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow(), nullable=False)
+
+    @validates('rating')
+    def validate_rating(self, key, value):
+        if value > 5 or value < 0:
             raise ValueError("Rating must be between 0 and 5")
-        if Validator.validate_user_by_id(user):
-            if Validator.validate_user_place(user, place):
-                self.id = str(uuid4())
-                self.feedback = feedback
-                self.rating = rating
-                self.user = user
-                self.place = place
-                self.created_at = datetime.now().isoformat()
-                self.updated_at = datetime.now().isoformat()
-                DataManager.save_new_item(self)
-                DataManager.add_review(self.user, self.place, self.id)
-            else:
-                raise ValueError("Place not valid")
-        else:
-            raise ValueError("User not valid")
+        return value
+
+    @validates('user')
+    def validate_user(self, key, value):
+        validated_user = value.lower()
+        if not Validator.validate_user_by_id(validated_user):
+            raise ValueError("User is not valid")
+        return validated_user
+
+    @validates('place')
+    def validate_place(self, key, value):
+        validated_place = value.lower()
+        if not Validator.validate_place(value):
+            raise ValueError("Place is not valid")
+        if Validator.validate_user_owns_place(self.user, validated_place):
+            raise ValueError("Place can not be reviewed by host user")
+        return validated_place
 
     @staticmethod
-    def delete(deletionid):
+    def delete(deletionid: str):
         """Function to delete a Review from the database"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            reviews = data['Review']
-            revowner = reviews[deletionid]['user']
-            placeid = reviews[deletionid]['place']
-            data['Place'][placeid]['reviews'].remove(deletionid)
-            data['User'][revowner]['reviews'].remove(deletionid)
-            del reviews[deletionid]
-            DataManager.save_to_file(data, datafile)
-        return data
+        session = get_session()
+        try:
+            reviewtodelete = session.query(Review).filter(id == deletionid).first()
+            if not reviewtodelete:
+                raise ValueError("Review does not exist")
+            session.delete(reviewtodelete)
+            session.commit()
+            return reviewtodelete
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()

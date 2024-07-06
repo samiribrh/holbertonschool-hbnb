@@ -1,7 +1,5 @@
 """Module Containing Services for Model"""
-from env.env import datafile, countryfile
-import json
-import re
+from Services.database import get_session
 
 
 class Validator:
@@ -18,130 +16,193 @@ class Validator:
     @staticmethod
     def validate_user_mail(email: str):
         """Validates user mail"""
+        import re
+
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if re.match(email_regex, email) is not None:
-            with open(datafile, 'r') as file:
-                data = json.loads(file.read())
-                users = data['User']
-                for userdata in users.values():
-                    if userdata['email'] == email.lower():
-                        return False, 0
+            from Model.user import User
+            session = get_session()
+            try:
+                users = session.query(User).filter(User.email == email).all()
+                if users:
+                    return False, 0
                 return True, 0
+            except Exception as e:
+                session.rollback()
+                raise e
+            finally:
+                session.close()
         return False, 1
 
     @staticmethod
     def validate_user_by_id(userid: str):
         """Validates user by its id"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            users = data['User']
-            if userid not in users:
+        from Model.user import User
+
+        session = get_session()
+        try:
+            users = session.query(User).filter(User.id == userid).all()
+            if not users:
                 return False
-        return True
+            return True
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
     @staticmethod
     def validate_address(address: str):
         """Validate address by str"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            places = data['Place']
-            for placedata in places.values():
-                if placedata['address'].lower() == address.lower():
-                    return False
-        return True
+        from Model.place import Place
+
+        session = get_session()
+        try:
+            places = session.query(Place).filter(Place.address == address).all()
+            if places:
+                return False
+            return True
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
     @staticmethod
     def validate_city(city: str):
         """Validates city by its id"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            cities = data['City']
-            if city not in cities:
+        from Model.city import City
+
+        session = get_session()
+        try:
+            cities = session.query(City).filter(City.id == city).all()
+            if not cities:
                 return False
-        return True
+            return True
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
     @staticmethod
     def validate_country(country: str):
         """Function for validating a country"""
-        with open(countryfile, 'r') as file:
-            data = json.loads(file.read())
-            if country.upper() not in data:
+        from Model.country import Country
+
+        session = get_session()
+        try:
+            countries = session.query(Country).filter(Country.id == country.upper()).all()
+            if not countries:
                 return False
             return True
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
     @staticmethod
     def validate_city_in_country(city: str, country: str):
         """Validates city by its name and country name"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            cities = data["City"]
-            for citya in cities.values():
-                if citya['name'].lower() == city.lower() and citya['country'].lower() == country.lower():
+        from Model.city import City
+
+        session = get_session()
+        try:
+            cities = session.query(City).filter(City.name == city).all()
+            for citydata in cities:
+                if citydata.country == country.upper():
                     return False
             return True
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
     @staticmethod
-    def validate_coordinates(latitude: float, longitude: float):
-        """Validates latitude and longitude"""
-        if latitude < -90 or latitude > 90:
-            return False
-        if longitude < -180 or longitude > 180:
-            return False
-        return True
+    def validate_place(place: str):
+        """Validates if place exists"""
+        from Model.place import Place
 
-    @staticmethod
-    def validate_user_place(user: str, place: str):
-        """Validates user place"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            users = data['User']
-            if user not in users:
-                return False
-            places = data['Place']
-            if place not in places:
-                return False
-            ouruser = users[user]
-            if place in ouruser["host_places"]:
+        session = get_session()
+        try:
+            places = session.query(Place).filter(Place.id == place).all()
+            if not places:
                 return False
             return True
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
     @staticmethod
     def validate_user_owns_place(user: str, place: str):
         """Function for validating user owns place"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            ouruser = data['User'][user]
-            if place in ouruser["host_places"]:
-                return False
-            return True
+        from Model.place import Place
+
+        session = get_session()
+        try:
+            places = session.query(Place).filter(Place.host == user).all()
+            for placedata in places:
+                if placedata.id == place:
+                    return True
+            return False
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
+
+    @staticmethod
+    def validate_amenity_by_name(amenity: str):
+        """Function for validating amenity by name"""
+        from Model.amenity import Amenity
+
+        session = get_session()
+        try:
+            amenities = session.query(Amenity).filter(Amenity.name == amenity).all()
+            if amenities:
+                return True
+            return False
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
     @staticmethod
     def validate_amenity(amenity: str):
-        """If amenity not exists return true"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            amenities = data['Amenity']
-            for amenitydata in amenities.values():
-                if amenitydata['name'] == amenity.lower():
-                    return False
-            return True
-
-    @staticmethod
-    def check_valid_amenity(amenity: str):
         """Function for validating amenity"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            amenities = data['Amenity']
-            if amenity not in amenities:
-                return False
-            return True
+        from Model.amenity import Amenity
+
+        session = get_session()
+        try:
+            amenities = session.query(Amenity).filter(Amenity.id == amenity).all()
+            if amenities:
+                return True
+            return False
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
     @staticmethod
-    def check_amenity_in_place(amenity: str, place: str):
+    def validate_amenity_in_place(amenity: str, place: str):
         """Function for validating amenity inside place"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            ourplace = data['Place'][place]
-            if amenity in ourplace['amenities']:
-                return False
-        return True
+        from Model.place_amenity import PlaceAmenity
+
+        session = get_session()
+        try:
+            placeamenity = (session.query(PlaceAmenity)
+                            .filter(PlaceAmenity.amenity_id == amenity, PlaceAmenity.place_id == place).all())
+            if placeamenity:
+                return True
+            return False
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()

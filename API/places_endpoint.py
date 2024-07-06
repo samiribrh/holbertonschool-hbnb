@@ -72,7 +72,7 @@ def update_place(place_id):
     if not ((isinstance(price, int) or isinstance(price, float)) and (price >= 0)):
         return jsonify({'error': 'Invalid price'}), 400
     for amenity in datatoupdate.get('amenities'):
-        if not Validator.check_valid_amenity(amenity):
+        if not Validator.validate_amenity(amenity):
             return jsonify({'error': 'Invalid amenity'}), 400
     data['name'] = datatoupdate.get('name')
     data['description'] = datatoupdate.get('description')

@@ -1,73 +1,95 @@
 """Module containing Place class"""
-from Services.Validators.validators import *
-from Services.DataManipulation.datamanager import DataManager
-from Model.review import Review
-from env.env import datafile
+from Services.Validators.validators import Validator
+from Services.database import Base, get_session
+from sqlalchemy.orm import validates
+from sqlalchemy import Column, String, Text, Float, Integer, DateTime
 from uuid import uuid4
 from datetime import datetime
 
 
-class Place:
+class Place(Base):
     """The Place Class"""
+    __tablename__ = 'places'
 
-    def __init__(self, name: str, description: str, address: str, city: str, latitude: float, longitude: float,
-                 host: str, num_of_rooms: int, bathrooms: int, price: float, max_guests: int, amenities=None):
-        """Place constructor"""
-        if amenities is None:
-            amenities = []
-        for amenity in amenities:
-            if not Validator.check_valid_amenity(amenity):
-                raise ValueError("Amenity Not Found")
-        if not Validator.validate_coordinates(latitude, longitude):
-            raise ValueError("Latitude and Longitude are not valid")
-        if not (Validator.is_positive_int(num_of_rooms), Validator.is_positive_int(bathrooms),
-                Validator.is_positive_int(max_guests)):
-            raise ValueError("num_of_rooms, bathrooms, max_guests should be positive integers")
-        if not ((isinstance(price, int) or isinstance(price, float)) and (price >= 0)):
-            raise ValueError("Price should be positive integer")
-        if Validator.validate_address(address):
-            if Validator.validate_city(city):
-                if Validator.validate_user_by_id(host):
-                    self.id = str(uuid4())
-                    self.name = name.capitalize()
-                    self.description = description
-                    self.address = address
-                    self.city = city
-                    self.latitude = latitude
-                    self.longitude = longitude
-                    self.host = host
-                    self.num_of_rooms = num_of_rooms
-                    self.bathrooms = bathrooms
-                    self.price = price
-                    self.max_guests = max_guests
-                    self.amenities = amenities
-                    self.reviews = []
-                    self.created_at = datetime.now().isoformat()
-                    self.updated_at = datetime.now().isoformat()
-                    DataManager.save_new_item(self)
-                    DataManager.add_host_place(self.host, self.id)
-                else:
-                    raise ValueError("Host not found")
-            else:
-                raise ValueError("City not valid")
-        else:
+    id = Column(String(36), primary_key=True, default=lambda: uuid4())
+    name = Column(String(255), nullable=False)
+    description = Column(Text)
+    address = Column(String(255), nullable=False)
+    city = Column(String(36), nullable=False)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)
+    host = Column(String(36), nullable=False)
+    num_of_rooms = Column(Integer, nullable=False)
+    bathrooms = Column(Integer, nullable=False)
+    price = Column(Float, nullable=False)
+    max_guests = Column(Integer, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.utcnow(), nullable=False)
+    updated_at = Column(DateTime, default=lambda: datetime.utcnow(), onupdate=lambda: datetime.utcnow(), nullable=False)
+
+    @validates('name')
+    def validate_name(self, key, value):
+        if not value:
+            raise ValueError('Name cannot be empty')
+        return value
+
+    @validates('address')
+    def validate_address(self, key, value):
+        validated_address = ' '.join(word.capitalize() for word in value.split())
+        if not Validator.validate_address(value):
             raise ValueError("Place with this address already exists")
+        return validated_address
+
+    @validates('city')
+    def validate_city(self, key, value):
+        validated_city = value.lower()
+        if not Validator.validate_city(validated_city):
+            raise ValueError("City not valid")
+        return validated_city
+
+    @validates('latitude')
+    def validate_latitude(self, key, value):
+        if value < -90 or value > 90:
+            raise ValueError("Latitude not valid")
+        return value
+
+    @validates('longitude')
+    def validate_longitude(self, key, value):
+        if value < -180 or value > 180:
+            raise ValueError("Longitude not valid")
+        return value
+
+    @validates('host')
+    def validate_host(self, key, value):
+        validated_host = value.lower()
+        if not Validator.validate_user_by_id(validated_host):
+            raise ValueError("Host not valid")
+        return validated_host
+
+    @validates('num_of_rooms', 'bathrooms', 'max_guests')
+    def validate_posint(self, key, value):
+        if value <= 0:
+            raise ValueError("num_of_rooms, bathrooms, max_guests must be positive integers")
+        return value
 
     @staticmethod
-    def delete(deletionid):
-        """Function to delete a Place from the database"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-        reviews = data['Place'][deletionid]['reviews']
-        for review in reviews:
-            Review.delete(review)
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-        places = data['Place']
-        hostid = places[deletionid]['host']
-        del places[deletionid]
-        hostuser = data['User'][hostid]
-        if deletionid in hostuser['host_places']:
-            hostuser['host_places'].remove(deletionid)
-        DataManager.save_to_file(data, datafile)
-        return data
+    def delete(deletionid: str):
+        """Function to delete a Place object"""
+        from Model.place_amenity import PlaceAmenity
+
+        session = get_session()
+        try:
+            placetodelete = session.query(Place).filter(Place.id == deletionid).one()
+            if not placetodelete:
+                raise ValueError("Place not exists")
+            amenity_place = session.query(PlaceAmenity).filter(PlaceAmenity.place_id == deletionid).all()
+            for amenityobj in amenity_place:
+                session.delete(amenityobj)
+                session.commit()
+            session.delete(placetodelete)
+            session.commit()
+            return placetodelete
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()

@@ -1,6 +1,6 @@
 """Module containing DataManager class"""
 from env.env import datafile
-from Services.Validators.validators import *
+from Services.Validators.validators import Validator
 import json
 
 
@@ -48,7 +48,7 @@ class DataManager:
     def add_amenity_to_place(user: str, amenity: str, place: str):
         """Method for adding an amenity to a place"""
         if not Validator.validate_user_owns_place(user, place):
-            if Validator.check_amenity_in_place(amenity, place):
+            if Validator.validate_amenity_in_place(amenity, place):
                 with open(datafile, 'r') as file:
                     data = json.loads(file.read())
                     place = data['Place'][place]
