@@ -1,8 +1,5 @@
 """Module containing main app for HBnB project"""
-from Model.amenity import Amenity
-from Model.place_amenity import PlaceAmenity
-from Model.city import City
-from Model.place import Place
+from Services.DataManipulation.crud import Crud
 from Services.Initializer.initializer import initialize_services
 from Services.Initializer.define_blueprints import define_blueprints
 from Services.database import get_session
@@ -21,10 +18,6 @@ def main():
     def index():
         return "Hi!"
 
-
-
-    # app.run(port=5000, debug=True)
-    #
 
 
 if __name__ == '__main__':
