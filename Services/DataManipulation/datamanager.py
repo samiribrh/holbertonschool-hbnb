@@ -1,66 +1,46 @@
 """Module containing DataManager class"""
-from env.env import datafile
 from Services.Validators.validators import Validator
-import json
+from Services.database import get_session
 
 
 class DataManager:
     """The DataManager class provides methods for managing database"""
-    @staticmethod
-    def save_to_file(data, datafile):
-        """Method to save data to file"""
-        with open(datafile, 'w') as file:
-            file.write(json.dumps(data, indent=4))
 
     @staticmethod
-    def save_new_item(item):
-        """Function for saving a new item to the database"""
-        datatype = type(item).__name__
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-        data[datatype][item.id] = item.__dict__
-        with open(datafile, 'w') as file:
-            file.write(json.dumps(data, indent=4))
+    def custom_encoder(obj):
+        """Method to turn object into json format"""
+        obj_dict = obj.__dict__
+        obj_id = obj_dict.get('id')
+        obj_dict.pop('_sa_instance_state')
+        return {obj_id: obj_dict}
 
     @staticmethod
-    def add_host_place(userid: str, place: str):
-        """Method to add his host place to the user data"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            user = data['User'][userid]
-            user['host_places'].append(place)
-        with open(datafile, 'w') as file:
-            file.write(json.dumps(data, indent=4))
-
-    @staticmethod
-    def add_review(userid: str, place: str, reviewid: str):
-        """Method to add review"""
-        with open(datafile, 'r') as file:
-            data = json.loads(file.read())
-            user = data['User'][userid]
-            user['reviews'].append(reviewid)
-            place = data['Place'][place]
-            place['reviews'].append(reviewid)
-        with open(datafile, 'w') as file:
-            file.write(json.dumps(data, indent=4))
+    def save_to_db(newdata):
+        """Method to save data to database"""
+        session = get_session()
+        try:
+            session.add(newdata)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
     @staticmethod
     def add_amenity_to_place(user: str, amenity: str, place: str):
         """Method for adding an amenity to a place"""
-        if not Validator.validate_user_owns_place(user, place):
+        session = get_session()
+        try:
+            if not Validator.validate_user_owns_place(user, place):
+                raise ValueError("User does not own place")
             if Validator.validate_amenity_in_place(amenity, place):
-                with open(datafile, 'r') as file:
-                    data = json.loads(file.read())
-                    place = data['Place'][place]
-                    amenities = data['Amenity']
-                    for amntdata in amenities.values():
-                        if amntdata['name'] == amenity:
-                            amenity = amntdata['id']
-                            break
-                    place['amenities'].append(amenity)
-                with open(datafile, 'w') as file:
-                    file.write(json.dumps(data, indent=4))
-            else:
-                print("Amenity already exists in specified place")
-        else:
-            print("User does not own this place")
+                raise ValueError("Amenity already exists in place")
+            from Model.place_amenity import PlaceAmenity
+            new_pl_am = PlaceAmenity(place_id=place, amenity_id=amenity)
+            DataManager.save_to_db(new_pl_am)
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()

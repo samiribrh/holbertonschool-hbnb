@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Creating the engine
-engine = create_engine(DB_URL, echo=True)
+engine = create_engine(DB_URL)
 
 # Creating the Base class
 Base = declarative_base()

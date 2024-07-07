@@ -1,10 +1,13 @@
 """Module for places endpoint"""
 from Services.DataManipulation.crud import Crud
+from Services.DataManipulation.datamanager import DataManager
+from Services.database import get_session
 from Services.Validators.validators import Validator
-from env.env import datafile
 from Model.place import Place
 from Model.review import Review
+from Model.place_amenity import PlaceAmenity
 from flask import Blueprint, jsonify, request
+from uuid import uuid4
 import json
 
 places_bp = Blueprint('places', __name__)
@@ -12,16 +15,37 @@ places_bp = Blueprint('places', __name__)
 
 @places_bp.route('/', methods=['GET'])
 def get_places():
-    data = Crud.get('Place')
-    return jsonify(data), 200
+    raw_data = Crud.get('Place')
+    data_dict = dict()
+    for data in raw_data:
+        rd_data = DataManager.custom_encoder(data)
+        amenities = []
+        session = get_session()
+        plc_amnt = session.query(PlaceAmenity).filter(PlaceAmenity.place_id == data.id).all()
+        for amenity in plc_amnt:
+            amenities.append(amenity.amenity_id)
+        rd_data[data.id]['amenities'] = amenities
+        data_dict.update(rd_data)
+    if not data_dict:
+        return jsonify({'message': 'No places found'}), 200
+    return jsonify(data_dict), 200
 
 
 @places_bp.route('/<place_id>', methods=['GET'])
 def get_place_by_id(place_id):
-    data = Crud.get('Place', place_id)
-    if data is None:
+    raw_data = Crud.get('Place', place_id)
+    if not raw_data:
         return jsonify({'error': 'Place not found'}), 404
-    return jsonify(data), 200
+    rd_data = DataManager.custom_encoder(raw_data)
+    amenities = []
+    session = get_session()
+    plc_amnt = session.query(PlaceAmenity).filter(PlaceAmenity.place_id == place_id).all()
+    for amenity in plc_amnt:
+        amenities.append(amenity.amenity_id)
+    rd_data[place_id]['amenities'] = amenities
+    data_dict = dict()
+    data_dict.update(rd_data)
+    return jsonify(data_dict), 200
 
 
 @places_bp.route('/', methods=['POST'])
@@ -40,16 +64,19 @@ def create_place():
     bathrooms = data.get('bathrooms')
     price = data.get('price')
     max_guests = data.get('max_guests')
-    amenities = data.get('amenities')
-    if (not name or not description or not address or not city or not latitude or not longitude or not host or
+    if (not name or not address or not city or not latitude or not longitude or not host or
             not num_of_rooms or not bathrooms or not price or not max_guests):
         return jsonify({'error': 'Missing data'}), 400
     try:
-        place = Place(name, description, address, city, latitude, longitude, host, num_of_rooms,
-                      bathrooms, price, max_guests, amenities)
+        new_place_id = str(uuid4())
+        place = Place(id=new_place_id, name=name, description=description, address=address, city=city,
+                      latitude=latitude, longitude=longitude, host=host, num_of_rooms=num_of_rooms,
+                      bathrooms=bathrooms, price=price, max_guests=max_guests)
+        DataManager.save_to_db(place)
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
-    return jsonify(place.__dict__), 201
+    place = Crud.get('Place', new_place_id)
+    return jsonify(DataManager.custom_encoder(place)), 201
 
 
 @places_bp.route('/<place_id>', methods=['PUT'])
@@ -60,46 +87,24 @@ def update_place(place_id):
     data = Crud.get('Place', place_id)
     if data is None:
         return jsonify({'error': 'Place not found'}), 404
-    if not Validator.validate_city(datatoupdate.get('city')):
-        return jsonify({'error': 'Invalid city'}), 400
-    if not Validator.validate_coordinates(datatoupdate.get('latitude'), datatoupdate.get('longitude')):
-        return jsonify({'error': 'Invalid coordinates'}), 400
-    if not (Validator.is_positive_int(datatoupdate.get('num_of_rooms')),
-            Validator.is_positive_int(datatoupdate.get('bathrooms')),
-            Validator.is_positive_int(datatoupdate.get('max_guest')),):
-        return jsonify({'error': 'num_of_rooms, bathrooms, max_guests should be positive integers'}), 400
-    price = datatoupdate.get('price')
-    if not ((isinstance(price, int) or isinstance(price, float)) and (price >= 0)):
-        return jsonify({'error': 'Invalid price'}), 400
-    for amenity in datatoupdate.get('amenities'):
-        if not Validator.validate_amenity(amenity):
-            return jsonify({'error': 'Invalid amenity'}), 400
-    data['name'] = datatoupdate.get('name')
-    data['description'] = datatoupdate.get('description')
-    data['address'] = datatoupdate.get('address')
-    data['city'] = datatoupdate.get('city')
-    data['latitude'] = datatoupdate.get('latitude')
-    data['longitude'] = datatoupdate.get('longitude')
-    data['num_of_rooms'] = datatoupdate.get('num_of_rooms')
-    data['bathrooms'] = datatoupdate.get('bathrooms')
-    data['price'] = datatoupdate.get('price')
-    data['max_guests'] = datatoupdate.get('max_guests')
-    data['amenities'] = datatoupdate.get('amenities')
-    if (not data['name'] or not data['description'] or not data['address'] or not data['city'] or
-            not data['latitude'] or not data['longitude'] or not data['num_of_rooms'] or
-            not data['bathrooms'] or not data['price'] or not data['max_guests']):
-        return jsonify({'error': 'Missing data'}), 400
-    status = Crud.update(place_id, 'Place', data)
-    if status == 404:
-        return jsonify({'error': 'Place not found'}), 404
-    return jsonify({'message': 'Place updated'}), 200
+    fields_to_update = ['host', 'name', 'description', 'address', 'city', 'latitude', 'longitude',
+                        'num_of_rooms', 'bathrooms', 'price', 'max_guests']
+    for field in fields_to_update:
+        if datatoupdate.get(field):
+            try:
+                status = Crud.update('Place', place_id, field, datatoupdate[field])
+                if status == 404:
+                    return jsonify({'error': 'Place not found'}), 404
+            except Exception as e:
+                return jsonify({'error': str(e)}), 400
+    return jsonify({'message': 'Place updated'}), 201
 
 
 @places_bp.route('/<place_id>', methods=['DELETE'])
 def delete_place(place_id):
     if not place_id:
         return jsonify({'error': 'Missing data'}), 404
-    status = Crud.delete(place_id, 'Place')
+    status = Crud.delete('Place', place_id)
     if status == 404:
         return jsonify({'error': 'Place not found'}), 404
     return jsonify({'message': 'Place deleted'}), 204
@@ -109,17 +114,20 @@ def delete_place(place_id):
 def get_reviews(place_id):
     if not place_id:
         return jsonify({'error': 'Missing data'}), 400
-    plcdata = Crud.get('Place', place_id)
-    plcreviews = plcdata.get('reviews')
-    if not plcreviews:
-        return jsonify({'message': 'No review found'}), 200
-    with open(datafile, 'r') as file:
-        data = json.loads(file.read())
-    reviews = data['Review']
-    reviewstoreturn = dict()
-    for review in plcreviews:
-        reviewstoreturn[review] = reviews.get(review)
-    return jsonify(reviewstoreturn), 200
+    session = get_session()
+    try:
+        reviews = session.query(Review).filter(Review.place == place_id).all()
+        data_dict = dict()
+        for data in reviews:
+            rd_data = DataManager.custom_encoder(data)
+            data_dict.update(rd_data)
+        if not data_dict:
+            return jsonify({'message': 'No places found'}), 200
+        return jsonify(data_dict), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 200
+    finally:
+        session.close()
 
 
 @places_bp.route('/<place_id>/reviews', methods=['POST'])
@@ -132,8 +140,13 @@ def add_reviews(place_id):
     feedback = data.get('feedback')
     rating = data.get('rating')
     user = data.get('user')
+    if not rating or not user:
+        return jsonify({'error': 'Missing data'}), 400
     try:
-        review = Review(feedback, rating, user, place_id)
+        new_review_id = str(uuid4())
+        review = Review(id=new_review_id, user=user, place=place_id, feedback=feedback, rating=rating)
+        DataManager.save_to_db(review)
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
-    return jsonify(review.__dict__), 201
+    review = Crud.get('Review', new_review_id)
+    return jsonify(DataManager.custom_encoder(review)), 201

@@ -1,24 +1,36 @@
 """Module for user endpoint"""
 from Services.DataManipulation.crud import Crud
+from Services.DataManipulation.datamanager import DataManager
 from Services.Validators.validators import Validator
+from Services.database import get_session
 from Model.city import City
 from flask import Blueprint, jsonify, request
+from uuid import uuid4
+from datetime import datetime
 
 cities_bp = Blueprint('cities', __name__)
 
 
 @cities_bp.route('/', methods=['GET'])
 def get_cities():
-    data = Crud.get('City')
-    return jsonify(data), 200
+    raw_data = Crud.get('City')
+    data_dict = dict()
+    for data in raw_data:
+        data_dict.update(DataManager.custom_encoder(data))
+    if not data_dict:
+        return jsonify({'message': 'No cities found'}), 200
+    return jsonify(data_dict), 200
 
 
 @cities_bp.route('/<city_id>', methods=['GET'])
 def get_city_by_id(city_id):
-    data = Crud.get('City', city_id)
-    if data is None:
-        return jsonify({'error': 'City not found'}), 404
-    return jsonify(data), 200
+    raw_data = Crud.get('City', city_id)
+    if not raw_data:
+        return jsonify({'message': 'City not found'}), 200
+    rd_data = DataManager.custom_encoder(raw_data)
+    data_dict = dict()
+    data_dict.update(rd_data)
+    return jsonify(data_dict), 200
 
 
 @cities_bp.route('/', methods=['POST'])
@@ -28,13 +40,16 @@ def create_city():
         return jsonify({'error': 'No data'}), 400
     name = data.get('name')
     country = data.get('country')
-    if not name or not country:
+    if not (name and country):
         return jsonify({'error': 'Missing data'}), 400
     try:
-        city = City(name, country)
-    except ValueError as e:
+        new_city_id = str(uuid4())
+        city = City(id=new_city_id, name=name, country=country)
+        DataManager.save_to_db(city)
+    except Exception as e:
         return jsonify({'error': str(e)}), 400
-    return jsonify(city.__dict__), 201
+    city = Crud.get('City', new_city_id)
+    return jsonify(DataManager.custom_encoder(city)), 201
 
 
 @cities_bp.route('/<city_id>', methods=['PUT'])
@@ -42,26 +57,32 @@ def update_city(city_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
         return jsonify({'error': 'No data'}), 400
-    data = Crud.get('City', city_id)
+    session = get_session()
+    data = session.query(City).filter(City.id == city_id).all()
     if data is None:
         return jsonify({'error': 'City not found'}), 404
-    if not Validator.validate_country(datatoupdate.get('country')):
-        return jsonify({'error': 'Invalid country'}), 400
-    data['name'] = datatoupdate.get('name')
-    data['country'] = datatoupdate.get('country')
-    if not (data['name'] or data['country']):
+    name = datatoupdate.get('name')
+    country = datatoupdate.get('country')
+    if not (name and country):
         return jsonify({'error': 'Missing data'}), 400
-    status = Crud.update(city_id, 'City', data)
-    if status == 404:
-        return jsonify({'error': 'City not found'}), 404
-    return jsonify({'message': 'City updated'}), 200
+    if Validator.validate_city_in_country(name, country):
+        return jsonify({'error': 'City already exists'}), 400
+    try:
+        setattr(data[0], 'name', datatoupdate.get('name'))
+        setattr(data[0], 'country', datatoupdate.get('country'))
+        session.commit()
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    finally:
+        session.close()
+    return jsonify({'message': 'City updated'}), 201
 
 
 @cities_bp.route('/<city_id>', methods=['DELETE'])
 def delete_city(city_id):
     if not city_id:
         return jsonify({'error': 'Missing data'}), 400
-    status = Crud.delete(city_id, 'City')
+    status = Crud.delete('City', city_id)
     if status == 404:
         return jsonify({'error': 'City not found'}), 404
     return jsonify({'message': 'City deleted'}), 204

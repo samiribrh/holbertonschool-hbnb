@@ -109,11 +109,11 @@ class Validator:
 
         session = get_session()
         try:
-            cities = session.query(City).filter(City.name == city).all()
+            cities = session.query(City).filter(City.country == country).all()
             for citydata in cities:
-                if citydata.country == country.upper():
-                    return False
-            return True
+                if citydata.name == city:
+                    return True
+            return False
         except Exception as e:
             session.rollback()
             raise e

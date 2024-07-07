@@ -2,7 +2,7 @@
 from Services.Validators.validators import Validator
 from Services.database import Base, get_session
 from sqlalchemy.orm import validates
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, event
 from uuid import uuid4
 from datetime import datetime
 
@@ -34,7 +34,7 @@ class City(Base):
         validated_country = value.upper()
         if not Validator.validate_country(validated_country):
             raise ValueError('Invalid country value')
-        if not Validator.validate_city_in_country(self.name, value):
+        if Validator.validate_city_in_country(self.name, value):
             raise ValueError("City already exists")
         return validated_country
 

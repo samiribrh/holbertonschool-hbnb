@@ -54,12 +54,12 @@ class User(Base):
 
     @validates('first_name')
     def validate_first_name(self, key, value):
-        validated_first_name = value.capitalize()
+        validated_first_name = ' '.join(word.capitalize() for word in value.split())
         return validated_first_name
 
     @validates('last_name')
     def validate_last_name(self, key, value):
-        validated_last_name = value.capitalize()
+        validated_last_name = ' '.join(word.capitalize() for word in value.split())
         return validated_last_name
 
     @staticmethod

@@ -1,41 +1,47 @@
 """Module for user endpoint"""
 from Services.DataManipulation.crud import Crud
+from Services.DataManipulation.datamanager import DataManager
+from Services.database import get_session
+from Model.city import City
 from Model.country import Country
-from env.env import countryfile, datafile
 from flask import Blueprint, jsonify
-import json
 
 countries_bp = Blueprint('countries', __name__)
 
 
 @countries_bp.route('/', methods=['GET'])
 def get_countries():
-    with open(countryfile, 'r') as file:
-        countries = json.loads(file.read())
-        return jsonify(countries), 200
+    raw_data = Crud.get('Country')
+    data_dict = dict()
+    for data in raw_data:
+        data_dict.update(DataManager.custom_encoder(data))
+    if not data_dict:
+        return jsonify({'message': 'No countries found'})
+    return jsonify(data_dict), 200
 
 
 @countries_bp.route('/<country_code>', methods=['GET'])
 def get_country(country_code):
-    with open(countryfile, 'r') as file:
-        countries = json.loads(file.read())
-        country = countries.get(country_code)
-        if country is None:
-            return jsonify({'error': 'No country found'}), 404
-        return jsonify(country), 200
+    raw_data = Crud.get('Country', country_code)
+    if not raw_data:
+        return jsonify({'message': 'Country not found'}), 404
+    rd_data = DataManager.custom_encoder(raw_data)
+    data_dict = dict()
+    data_dict.update(rd_data)
+    return jsonify(data_dict), 200
 
 
 @countries_bp.route('/<country_code>/cities', methods=['GET'])
 def get_cities(country_code):
-    with open(countryfile, 'r') as file:
-        countries = json.loads(file.read())
-        if country_code not in countries:
-            return jsonify({'error': 'No country found'}), 404
-    with open(datafile, 'r') as file:
-        data = json.loads(file.read())
-        cities = data['City']
-        cities_dict = dict()
-        for city, info in cities.items():
-            if info['country'] == country_code:
-                cities_dict[city] = cities[city]
-    return jsonify(cities_dict), 200
+    session = get_session()
+    country = session.query(Country).filter_by(id=country_code).all()
+    if not country:
+        return jsonify({'message': 'Country not found'}), 404
+    raw_data = session.query(City).filter_by(country=country_code).all()
+    data_dict = dict()
+    for data in raw_data:
+        rd_data = DataManager.custom_encoder(data)
+        data_dict.update(rd_data)
+    if not data_dict:
+        return jsonify({'message': 'No cities found'}), 404
+    return jsonify(data_dict), 200

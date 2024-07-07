@@ -1,30 +1,42 @@
 """Module for user endpoint"""
 from Services.DataManipulation.crud import Crud
+from Services.DataManipulation.datamanager import DataManager
+from Services.database import get_session
 from Model.user import User
+from Model.review import Review
 from env.env import datafile
 from flask import Blueprint, jsonify, request
 import json
+from uuid import uuid4
 
 users_bp = Blueprint('users', __name__)
 
 
 @users_bp.route('/', methods=['GET'])
 def get_users():
-    data = Crud.get('User')
-    for spec in data.values():
-        spec.pop('password')
-        spec.pop('is_admin')
-    return jsonify(data), 200
+    raw_data = Crud.get('User')
+    data_dict = dict()
+    for data in raw_data:
+        rd_data = DataManager.custom_encoder(data)
+        for key, value in rd_data.items():
+            value.pop('password')
+        data_dict.update(rd_data)
+    if not data_dict:
+        return jsonify({'message': 'No users found'}), 200
+    return jsonify(data_dict), 200
 
 
 @users_bp.route('/<user_id>', methods=['GET'])
 def get_user_by_id(user_id):
-    data = Crud.get('User', user_id)
-    if data is None:
+    raw_data = Crud.get('User', user_id)
+    if raw_data is None:
         return jsonify({'error': 'User not found'}), 404
-    data.pop('password')
-    data.pop('is_admin')
-    return jsonify(data), 200
+    rd_data = DataManager.custom_encoder(raw_data)
+    for key, value in rd_data.items():
+        value.pop('password')
+    data_dict = dict()
+    data_dict.update(rd_data)
+    return jsonify(data_dict), 200
 
 
 @users_bp.route('/', methods=['POST'])
@@ -36,13 +48,16 @@ def create_user():
     password = data.get('password')
     first_name = data.get('first_name')
     last_name = data.get('last_name')
-    if not email or not password or not first_name or not last_name:
+    if not (email and password and first_name and last_name):
         return jsonify({'error': 'Missing data'}), 400
     try:
-        user = User(email, password, first_name, last_name)
-    except ValueError as e:
+        new_user_id = str(uuid4())
+        new_user = User(id=new_user_id, email=email, password=password, first_name=first_name, last_name=last_name)
+        DataManager.save_to_db(new_user)
+    except Exception as e:
         return jsonify({'error': str(e)}), 400
-    return jsonify(user.__dict__), 201
+    user = Crud.get('User', new_user_id)
+    return jsonify(DataManager.custom_encoder(user)), 201
 
 
 @users_bp.route('/<user_id>', methods=['PUT'])
@@ -53,15 +68,15 @@ def update_user(user_id):
     data = Crud.get('User', user_id)
     if data is None:
         return jsonify({'error': 'User not found'}), 404
-    data['email'] = datatoupdate.get('email')
-    data['password'] = datatoupdate.get('password')
-    data['first_name'] = datatoupdate.get('first_name')
-    data['last_name'] = datatoupdate.get('last_name')
-    if not (data['email'] and data['password'] and data['first_name'] and data['last_name']):
-        return jsonify({'error': 'Missing data'}), 400
-    status = Crud.update(user_id, 'User', data)
-    if status == 404:
-        return jsonify({'error': 'User not found'}), 404
+    fields_to_update = ['email', 'password', 'first_name', 'last_name']
+    for field in fields_to_update:
+        if datatoupdate.get(field):
+            try:
+                status = Crud.update('User', user_id, field, datatoupdate[field])
+                if status == 404:
+                    return jsonify({'error': 'User not found'}), 404
+            except Exception as e:
+                return jsonify({'error': str(e)}), 400
     return jsonify({'message': 'User updated'}), 201
 
 
@@ -69,7 +84,7 @@ def update_user(user_id):
 def delete_user(user_id):
     if not user_id:
         return jsonify({'error': 'Missing data'}), 400
-    status = Crud.delete(user_id, 'User')
+    status = Crud.delete('User', user_id)
     if status == 404:
         return jsonify({'error': 'User not found'}), 404
     return jsonify({'message': 'User deleted'}), 204
@@ -79,14 +94,17 @@ def delete_user(user_id):
 def get_reviews(user_id):
     if not user_id:
         return jsonify({'error': 'Missing data'}), 400
-    usrdata = Crud.get('User', user_id)
-    usrreviews = usrdata.get('reviews')
-    if not usrreviews:
-        return jsonify({'message': 'No review found'}), 200
-    with open(datafile, 'r') as file:
-        data = json.loads(file.read())
-    reviews = data['Review']
-    reviewstoreturn = dict()
-    for review in usrreviews:
-        reviewstoreturn[review] = reviews.get(review)
-    return jsonify(reviewstoreturn), 200
+    session = get_session()
+    try:
+        reviews = session.query(Review).filter(Review.user == user_id).all()
+        data_dict = dict()
+        for data in reviews:
+            rd_data = DataManager.custom_encoder(data)
+            data_dict.update(rd_data)
+        if not data_dict:
+            return jsonify({'message': 'No users found'}), 200
+        return jsonify(data_dict), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 200
+    finally:
+        session.close()

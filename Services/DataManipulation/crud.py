@@ -10,7 +10,6 @@ from Model.user import User
 from Model.place_amenity import PlaceAmenity
 from env.env import datafile
 from datetime import datetime
-import json
 
 
 class Crud:
@@ -21,10 +20,10 @@ class Crud:
         try:
             if entity_id is None:
                 return session.query(eval(entity_type)).all()
-            data = session.query(eval(entity_type)).filter(eval(entity_type).id == entity_id).one()
+            data = session.query(eval(entity_type)).filter(eval(entity_type).id == entity_id).all()
             if not data:
                 return None
-            return data
+            return data[0]
         except Exception as e:
             session.rollback()
             raise e
@@ -36,8 +35,10 @@ class Crud:
         """Method to update data"""
         session = get_session()
         try:
-            entity = session.query(eval(entity_type)).filter_by(id=entity_id).one()
-            setattr(entity, column_name, new_data)
+            entity = session.query(eval(entity_type)).filter_by(id=entity_id).all()
+            if not entity:
+                return 404
+            setattr(entity[0], column_name, new_data)
             session.commit()
         except Exception as e:
             session.rollback()
@@ -50,8 +51,10 @@ class Crud:
         """Method to delete data"""
         session = get_session()
         try:
-            entity = session.query(eval(entity_type)).filter_by(id=entity_id).one()
-            session.delete(entity)
+            entity = session.query(eval(entity_type)).filter_by(id=entity_id).all()
+            if not entity:
+                return 404
+            session.delete(entity[0])
             session.commit()
         except Exception as e:
             session.rollback()
