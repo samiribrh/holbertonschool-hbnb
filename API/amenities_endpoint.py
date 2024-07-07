@@ -1,6 +1,6 @@
 """Module for amenities endpoint"""
-from Services.DataManipulation.crud import Crud
 from Services.DataManipulation.datamanager import DataManager
+from Services.DataManipulation.crud import Crud
 from Model.amenity import Amenity
 from flask import Blueprint, jsonify, request
 from uuid import uuid4

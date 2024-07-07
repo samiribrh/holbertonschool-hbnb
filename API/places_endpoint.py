@@ -1,14 +1,12 @@
 """Module for places endpoint"""
-from Services.DataManipulation.crud import Crud
 from Services.DataManipulation.datamanager import DataManager
+from Services.DataManipulation.crud import Crud
 from Services.database import get_session
-from Services.Validators.validators import Validator
 from Model.place import Place
-from Model.review import Review
 from Model.place_amenity import PlaceAmenity
+from Model.review import Review
 from flask import Blueprint, jsonify, request
 from uuid import uuid4
-import json
 
 places_bp = Blueprint('places', __name__)
 

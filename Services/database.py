@@ -1,7 +1,7 @@
 """Module containing Database Initialization script"""
 from env.env import DB_URL
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import create_engine
 
 # Creating the engine
 engine = create_engine(DB_URL)

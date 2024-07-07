@@ -1,10 +1,10 @@
 """Module containing Place class"""
 from Services.Validators.validators import Validator
 from Services.database import Base, get_session
-from sqlalchemy.orm import validates
 from sqlalchemy import Column, String, Text, Float, Integer, DateTime
-from uuid import uuid4
+from sqlalchemy.orm import validates
 from datetime import datetime
+from uuid import uuid4
 
 
 class Place(Base):

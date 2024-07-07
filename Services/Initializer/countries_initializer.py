@@ -1,6 +1,6 @@
 """Module containing Initializers for the project"""
-from Model.country import Country
 from Services.database import get_session
+from Model.country import Country
 
 
 def initialize_countries():

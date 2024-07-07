@@ -8,7 +8,6 @@ from Model.place import Place
 from Model.review import Review
 from Model.user import User
 from Model.place_amenity import PlaceAmenity
-from env.env import datafile
 from datetime import datetime
 
 
