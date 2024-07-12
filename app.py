@@ -1,13 +1,9 @@
 """Module containing main app for HBnB project"""
-from Services.Initializer.define_blueprints import define_blueprints
 from Services.Initializer.initializer import initialize_services
-from Services.database import get_session
-from flask import Flask
+from Services.Initializer.create_app import create_app
+from flask import redirect, url_for
 
-app = Flask(__name__)
-app = define_blueprints(app)
-
-session = get_session()
+app = create_app()
 
 
 def main():
@@ -15,6 +11,10 @@ def main():
 
     @app.route('/', methods=['GET'])
     def index():
+        return redirect(url_for('login'))
+
+    @app.route('/login', methods=['GET'])
+    def login():
         return "Hi!"
 
     app.run(port=5000, debug=True)
