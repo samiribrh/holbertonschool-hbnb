@@ -1,5 +1,4 @@
 """Module for CRUD operations."""
-from Services.DataManipulation.datamanager import DataManager
 from Services.database import get_session
 from Model.amenity import Amenity
 from Model.city import City

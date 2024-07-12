@@ -46,11 +46,13 @@ def create_user():
     password = data.get('password')
     first_name = data.get('first_name')
     last_name = data.get('last_name')
+    role = data.get('role')
     if not (email and password and first_name and last_name):
         return jsonify({'error': 'Missing data'}), 400
     try:
         new_user_id = str(uuid4())
-        new_user = User(id=new_user_id, email=email, password=password, first_name=first_name, last_name=last_name)
+        new_user = User(id=new_user_id, email=email, password=password,
+                        first_name=first_name, last_name=last_name, role=role)
         DataManager.save_to_db(new_user)
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -66,7 +68,7 @@ def update_user(user_id):
     data = Crud.get('User', user_id)
     if data is None:
         return jsonify({'error': 'User not found'}), 404
-    fields_to_update = ['email', 'password', 'first_name', 'last_name']
+    fields_to_update = ['email', 'password', 'first_name', 'last_name', 'role']
     for field in fields_to_update:
         if datatoupdate.get(field):
             try:

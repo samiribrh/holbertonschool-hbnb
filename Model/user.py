@@ -2,7 +2,7 @@
 from Services.Validators.validators import Validator
 from Services.database import Base, get_session
 from Model.review import Review
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, CheckConstraint
 from sqlalchemy.orm import validates
 from datetime import datetime
 from uuid import uuid4
@@ -19,7 +19,11 @@ class User(Base):
     last_name = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow(), nullable=False)
-    role = Column(String(255), default='User', nullable=False)
+    role = Column(String(5), default='user', nullable=False)
+
+    __table_args__ = (
+        CheckConstraint(role.in_(['user', 'admin', 'owner']), name='role_check'),
+    )
 
     @validates('email')
     def validate_email(self, key, value):
