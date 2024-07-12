@@ -3,3 +3,4 @@ __pycache__/
 Data/
 env/
 .idea/
+.DS_Store/
