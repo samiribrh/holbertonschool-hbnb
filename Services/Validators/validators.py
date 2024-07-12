@@ -1,5 +1,6 @@
 """Module Containing Services for Model"""
 from Services.database import get_session
+from Services.DataManipulation.crud import Crud
 
 
 class Validator:
@@ -41,7 +42,7 @@ class Validator:
 
         session = get_session()
         try:
-            users = session.query(User).filter(User.id == userid).all()
+            users = Crud.get('User', userid)
             if not users:
                 return False
             return True
@@ -75,7 +76,7 @@ class Validator:
 
         session = get_session()
         try:
-            cities = session.query(City).filter(City.id == city).all()
+            cities = Crud.get('City', city)
             if not cities:
                 return False
             return True
@@ -127,7 +128,7 @@ class Validator:
 
         session = get_session()
         try:
-            places = session.query(Place).filter(Place.id == place).all()
+            places = Crud.get('Place', place)
             if not places:
                 return False
             return True
@@ -179,7 +180,7 @@ class Validator:
 
         session = get_session()
         try:
-            amenities = session.query(Amenity).filter(Amenity.id == amenity).all()
+            amenities = Crud.get('Amenity', amenity)
             if amenities:
                 return True
             return False
