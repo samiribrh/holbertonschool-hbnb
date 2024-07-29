@@ -1,6 +1,9 @@
 """File for initializing services."""
 from .countries_initializer import initialize_countries
 from Services.database import initialize_database
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def initialize_services():
