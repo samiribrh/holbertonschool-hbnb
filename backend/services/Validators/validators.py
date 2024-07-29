@@ -1,5 +1,5 @@
-"""Module Containing Services for Model"""
-from Services.database import get_session
+"""Module Containing services for model"""
+from services.database import get_session
 
 
 class Validator:

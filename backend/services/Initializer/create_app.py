@@ -1,5 +1,5 @@
 """Module to create Flask app"""
-from Services.Initializer.define_blueprints import define_blueprints
+from services.Initializer.define_blueprints import define_blueprints
 from core.config import Config
 from flask_jwt_extended import JWTManager
 from flask import Flask

@@ -1,10 +1,10 @@
 """Module for places endpoint"""
-from Services.DataManipulation.datamanager import DataManager
-from Services.DataManipulation.crud import Crud
-from Services.database import get_session
-from Model.place import Place
-from Model.place_amenity import PlaceAmenity
-from Model.review import Review
+from services.DataManipulation.datamanager import DataManager
+from services.DataManipulation.crud import Crud
+from services.database import get_session
+from model.place import Place
+from model.place_amenity import PlaceAmenity
+from model.review import Review
 from flask import Blueprint, jsonify, request
 from uuid import uuid4
 

@@ -1,6 +1,6 @@
 """Module containing main app for HBnB project"""
-from Services.Initializer.initializer import initialize_services
-from Services.Initializer.create_app import create_app
+from services.Initializer.initializer import initialize_services
+from services.Initializer.create_app import create_app
 from flask import redirect, url_for
 
 app = create_app()

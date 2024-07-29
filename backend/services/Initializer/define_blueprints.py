@@ -1,10 +1,10 @@
 """Module to define blueprints for Flask app"""
-from API.users_endpoint import users_bp
-from API.countries_endpoint import countries_bp
-from API.cities_endpoint import cities_bp
-from API.amenities_endpoint import amenities_bp
-from API.places_endpoint import places_bp
-from API.reviews_endpoint import reviews_bp
+from api.users_endpoint import users_bp
+from api.countries_endpoint import countries_bp
+from api.cities_endpoint import cities_bp
+from api.amenities_endpoint import amenities_bp
+from api.places_endpoint import places_bp
+from api.reviews_endpoint import reviews_bp
 
 
 def define_blueprints(app):

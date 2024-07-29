@@ -1,6 +1,6 @@
 """Module containing DataManager class"""
-from Services.Validators.validators import Validator
-from Services.database import get_session
+from services.Validators.validators import Validator
+from services.database import get_session
 
 
 class DataManager:

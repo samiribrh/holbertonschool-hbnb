@@ -1,7 +1,7 @@
 """Module for User class"""
-from Services.Validators.validators import Validator
-from Services.database import Base, get_session
-from Model.review import Review
+from services.Validators.validators import Validator
+from services.database import Base, get_session
+from model.review import Review
 from sqlalchemy import Column, String, DateTime, CheckConstraint
 from sqlalchemy.orm import validates
 from datetime import datetime
@@ -70,7 +70,7 @@ class User(Base):
     @staticmethod
     def delete(deletionid: str):
         """Function for delete a user object"""
-        from Model.place import Place
+        from model.place import Place
 
         session = get_session()
         try:

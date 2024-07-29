@@ -1,7 +1,7 @@
 """Module containing Initializers for the project"""
 from dotenv import load_dotenv
-from Services.database import get_session
-from Model.country import Country
+from services.database import get_session
+from model.country import Country
 import os
 
 load_dotenv()

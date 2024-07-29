@@ -1,6 +1,6 @@
 """Module containing place amenity junction model."""
-from Services.Validators.validators import Validator
-from Services.database import Base, get_session
+from services.Validators.validators import Validator
+from services.database import Base, get_session
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import validates
 from datetime import datetime

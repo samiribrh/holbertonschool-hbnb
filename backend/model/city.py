@@ -1,6 +1,6 @@
 """Module containing City class"""
-from Services.Validators.validators import Validator
-from Services.database import Base, get_session
+from services.Validators.validators import Validator
+from services.database import Base, get_session
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import validates
 from datetime import datetime
@@ -40,7 +40,7 @@ class City(Base):
 
     @staticmethod
     def delete(deletionid: str):
-        from Model.place import Place
+        from model.place import Place
 
         session = get_session()
         try:

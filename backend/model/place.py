@@ -1,6 +1,6 @@
 """Module containing Place class"""
-from Services.Validators.validators import Validator
-from Services.database import Base, get_session
+from services.Validators.validators import Validator
+from services.database import Base, get_session
 from sqlalchemy import Column, String, Text, Float, Integer, DateTime
 from sqlalchemy.orm import validates
 from datetime import datetime
@@ -74,7 +74,7 @@ class Place(Base):
     @staticmethod
     def delete(deletionid: str):
         """Function to delete a Place object"""
-        from Model.place_amenity import PlaceAmenity
+        from model.place_amenity import PlaceAmenity
 
         session = get_session()
         try:

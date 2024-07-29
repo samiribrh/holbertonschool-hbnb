@@ -1,12 +1,12 @@
 """Module for CRUD operations."""
-from Services.database import get_session
-from Model.amenity import Amenity
-from Model.city import City
-from Model.country import Country
-from Model.place import Place
-from Model.review import Review
-from Model.user import User
-from Model.place_amenity import PlaceAmenity
+from services.database import get_session
+from model.amenity import Amenity
+from model.city import City
+from model.country import Country
+from model.place import Place
+from model.review import Review
+from model.user import User
+from model.place_amenity import PlaceAmenity
 
 
 class Crud:
