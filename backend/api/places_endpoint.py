@@ -120,7 +120,7 @@ def get_reviews(place_id):
             rd_data = DataManager.custom_encoder(data)
             data_dict.update(rd_data)
         if not data_dict:
-            return jsonify({'message': 'No places found'}), 200
+            return jsonify({'message': 'No places found'}), 404
         return jsonify(data_dict), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 200

@@ -25,7 +25,7 @@ def get_cities():
 def get_city_by_id(city_id):
     raw_data = Crud.get('City', city_id)
     if not raw_data:
-        return jsonify({'message': 'City not found'}), 200
+        return jsonify({'message': 'City not found'}), 404
     rd_data = DataManager.custom_encoder(raw_data)
     data_dict = dict()
     data_dict.update(rd_data)
