@@ -1,6 +1,7 @@
 """Module Containing Services for Model"""
 from Services.database import get_session
 
+
 class Validator:
     """The CLass for Validator Methods"""
     @staticmethod
