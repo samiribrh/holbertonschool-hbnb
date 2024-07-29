@@ -17,7 +17,7 @@ def get_users():
     for data in raw_data:
         rd_data = DataManager.custom_encoder(data)
         for key, value in rd_data.items():
-            value.pop('password')
+            value.pop('role')
         data_dict.update(rd_data)
     if not data_dict:
         return jsonify({'message': 'No users found'}), 200
@@ -31,7 +31,7 @@ def get_user_by_id(user_id):
         return jsonify({'error': 'User not found'}), 404
     rd_data = DataManager.custom_encoder(raw_data)
     for key, value in rd_data.items():
-        value.pop('password')
+        value.pop('role')
     data_dict = dict()
     data_dict.update(rd_data)
     return jsonify(data_dict), 200
