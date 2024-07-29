@@ -1,0 +1,17 @@
+get:
+  tags:
+    - Country Endpoints
+  summary: Get all cities in a country by ID
+  description: Retrieve a list of all cities in a country by its ID
+  parameters:
+    - name: country_code
+      in: path
+      description: Code of the country to retrieve cities from
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: Successful operation
+    "404":
+      description: Country or cities not found

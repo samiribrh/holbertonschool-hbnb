@@ -1,0 +1,124 @@
+get:
+  tags:
+    - Place Endpoints
+  summary: Get a place by ID
+  description: Retrieve a place by its ID
+  parameters:
+    - name: id
+      in: path
+      description: ID of the place to retrieve
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: Successful operation
+    "404":
+      description: Place not found
+
+put:
+  tags:
+    - Place Endpoints
+  summary: Update an existing place
+  description: Update the details of an existing place
+  parameters:
+    - name: id
+      in: path
+      description: ID of the place to update
+      required: true
+      schema:
+        type: string
+    - name: host
+      in: body
+      description: Host of the place
+      required: false
+      schema:
+        type: string
+    - name: name
+      in: body
+      description: Name of the place
+      required: false
+      schema:
+        type: string
+    - name: description
+      in: body
+      description: Description of the place
+      required: false
+      schema:
+        type: string
+    - name: address
+      in: body
+      description: Address of the place
+      required: false
+      schema:
+        type: string
+    - name: city
+      in: body
+      description: City of the place
+      required: false
+      schema:
+        type: string
+    - name: latitude
+      in: body
+      description: Latitude of the place
+      required: false
+      schema:
+        type: number
+        format: float
+    - name: longitude
+      in: body
+      description: Longitude of the place
+      required: false
+      schema:
+        type: number
+        format: float
+    - name: num_of_rooms
+      in: body
+      description: Number of rooms in the place
+      required: false
+      schema:
+        type: integer
+    - name: bathrooms
+      in: body
+      description: Number of bathrooms in the place
+      required: false
+      schema:
+        type: integer
+    - name: price
+      in: body
+      description: Price of the place
+      required: false
+      schema:
+        type: number
+        format: float
+    - name: max_guests
+      in: body
+      description: Maximum number of guests
+      required: false
+      schema:
+        type: integer
+  responses:
+    "201":
+      description: Place updated
+    "400":
+      description: Invalid input
+    "404":
+      description: Place not found
+
+delete:
+  tags:
+    - Place Endpoints
+  summary: Delete a place by ID
+  description: Delete a place by its ID
+  parameters:
+    - name: id
+      in: path
+      description: ID of the place to delete
+      required: true
+      schema:
+        type: UUID
+  responses:
+    "204":
+      description: Place deleted
+    "404":
+      description: Place not found

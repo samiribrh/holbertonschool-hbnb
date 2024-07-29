@@ -1,0 +1,25 @@
+get:
+  tags:
+    - Amenity Endpoints
+  summary: Get all amenities
+  description: Get a list of all amenities
+  responses:
+    "200":
+      description: Successful operation
+post:
+  tags:
+    - Amenity Endpoints
+  summary: Create a new amenity
+  description: Create a new amenity
+  parameters:
+    - name: name
+      in: body
+      description: Name of the amenity
+      required: true
+      schema:
+        type: string
+  responses:
+    "201":
+      description: Amenity created
+    "400":
+      description: Invalid input

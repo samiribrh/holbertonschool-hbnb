@@ -1,0 +1,17 @@
+get:
+  tags:
+    - Country Endpoints
+  summary: Get a country by ID
+  description: Retrieve a country by its ID
+  parameters:
+    - name: country_code
+      in: path
+      description: Code of the country to retrieve
+      required: true
+      schema:
+        type: string
+  responses:
+    "200":
+      description: Successful operation
+    "404":
+      description: Country not found

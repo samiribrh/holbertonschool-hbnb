@@ -1,0 +1,19 @@
+get:
+  tags:
+    - User Endpoints
+  summary: Get all reviews of a user
+  description: Get all reviews of a user
+  parameters:
+    - name: id
+      in: path
+      description: ID of user to get reviews
+      required: true
+      schema:
+        type: UUID
+  responses:
+    "200":
+      description: Successful operation
+    "400":
+      description: Invalid input
+    "404":
+      description: User not found

@@ -1,0 +1,56 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "HBnB API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/users": {
+      "$ref": "./users_endpoint/users.yaml"
+    },
+    "/users/{user_id}": {
+      "$ref": "./users_endpoint/users_id.yaml"
+    },
+    "/users/{user_id}/reviews": {
+      "$ref": "./users_endpoint/users_id_reviews.yaml"
+    },
+
+    "/cities": {
+      "$ref": "./cities_endpoint/cities.yaml"
+    },
+    "/cities/{city_id}": {
+      "$ref": "./cities_endpoint/cities_id.yaml"
+    },
+
+    "/places": {
+      "$ref": "./places_endpoint/places.yaml"
+    },
+    "/places/{place_id}": {
+      "$ref": "./places_endpoint/places_id.yaml"
+    },
+    "/places/{place_id}/reviews": {
+      "$ref": "./places_endpoint/places_id_reviews.yaml"
+    },
+
+    "/reviews/{review_id}": {
+      "$ref": "./reviews_endpoint/reviews_id.yaml"
+    },
+
+    "/countries": {
+      "$ref": "./countries_endpoint/countries.yaml"
+    },
+    "/countries/{country_id}": {
+        "$ref": "./countries_endpoint/countries_id.yaml"
+    },
+    "/countries/{country_id}/cities": {
+        "$ref": "./countries_endpoint/countries_id_cities.yaml"
+    },
+
+    "/amenities": {
+      "$ref": "./amenities_endpoint/amenities.yaml"
+    },
+    "/amenities/{amenity_id}": {
+      "$ref": "./amenities_endpoint/amenities_id.yaml"
+    }
+  }
+}

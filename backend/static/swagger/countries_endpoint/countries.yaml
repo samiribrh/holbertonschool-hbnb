@@ -1,0 +1,8 @@
+get:
+  tags:
+    - Country Endpoints
+  summary: Get all countries
+  description: Retrieve a list of all countries
+  responses:
+    "200":
+      description: Successful operation

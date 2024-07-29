@@ -1,0 +1,32 @@
+get:
+  tags:
+    - City Endpoints
+  summary: Get all cities
+  description: Retrieve a list of all cities
+  responses:
+    "200":
+      description: Successful operation
+
+post:
+  tags:
+    - City Endpoints
+  summary: Create a new city
+  description: Create a new city
+  parameters:
+    - name: name
+      in: body
+      description: Name of the city
+      required: true
+      schema:
+        type: string
+    - name: country_code
+      in: body
+      description: Code of the country the city belongs to
+      required: true
+      schema:
+          type: string
+  responses:
+    "201":
+      description: City created
+    "400":
+      description: Invalid input

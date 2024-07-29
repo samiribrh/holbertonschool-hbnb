@@ -1,0 +1,55 @@
+get:
+  tags:
+    - Place Endpoints
+  summary: Get reviews for a place by ID
+  description: Retrieve reviews for a specific place by its ID
+  parameters:
+    - name: id
+      in: path
+      description: ID of the place to retrieve reviews for
+      required: true
+      schema:
+        type: UUID
+  responses:
+    "200":
+      description: Successful operation
+    "400":
+      description: Missing data
+    "404":
+      description: Place not found
+
+post:
+  tags:
+    - Place Endpoints
+  summary: Add a review for a place by ID
+  description: Add a review for a specific place by its ID
+  parameters:
+    - name: id
+      in: path
+      description: ID of the place to add a review for
+      required: true
+      schema:
+        type: UUID
+    - name: feedback
+      in: body
+      description: Feedback for the review
+      required: false
+      schema:
+        type: string
+    - name: rating
+      in: body
+      description: Rating for the review
+      required: true
+      schema:
+        type: integer
+    - name: user
+      in: body
+      description: User who is adding the review
+      required: true
+      schema:
+        type: string
+  responses:
+    "201":
+      description: Review created
+    "400":
+      description: Invalid input

@@ -1,0 +1,88 @@
+get:
+  tags:
+    - Place Endpoints
+  summary: Get all places
+  description: Get a list of all places
+  responses:
+    "200":
+      description: Successful operation
+post:
+  tags:
+    - Place Endpoints
+  summary: Create a new place
+  description: Create a new place
+  parameters:
+    - name: name
+      in: body
+      description: Name of the place
+      required: true
+      schema:
+        type: string
+    - name: description
+      in: body
+      description: Description of the place
+      required: false
+      schema:
+        type: string
+    - name: address
+      in: body
+      description: Address of the place
+      required: true
+      schema:
+        type: string
+    - name: city
+      in: body
+      description: City of the place
+      required: true
+      schema:
+        type: UUID
+    - name: latitude
+      in: body
+      description: Latitude of the place
+      required: true
+      schema:
+        type: number
+        format: float
+    - name: longitude
+      in: body
+      description: Longitude of the place
+      required: true
+      schema:
+        type: number
+        format: float
+    - name: host
+      in: body
+      description: Host of the place
+      required: true
+      schema:
+        type: UUID
+    - name: num_of_rooms
+      in: body
+      description: Number of rooms in the place
+      required: true
+      schema:
+        type: integer
+    - name: bathrooms
+      in: body
+      description: Number of bathrooms in the place
+      required: true
+      schema:
+        type: integer
+    - name: price
+      in: body
+      description: Price of the place
+      required: true
+      schema:
+        type: number
+        format: float
+    - name: max_guests
+      in: body
+      description: Maximum number of guests
+      required: true
+      schema:
+        type: integer
+  responses:
+    "201":
+      description: Place created
+    "400":
+      description: Invalid input

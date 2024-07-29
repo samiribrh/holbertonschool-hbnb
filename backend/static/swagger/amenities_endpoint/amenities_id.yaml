@@ -1,0 +1,61 @@
+get:
+  tags:
+    - Amenity Endpoints
+  summary: Get an amenity by ID
+  description: Get an amenity by ID
+  parameters:
+    - name: id
+      in: path
+      description: ID of amenity to return
+      required: true
+      schema:
+        type: UUID
+  responses:
+    "200":
+      description: Successful operation
+    "404":
+      description: amenity not found
+put:
+  tags:
+    - Amenity Endpoints
+  summary: Update an amenity by ID
+  description: Update an amenity by ID
+  parameters:
+    - name: id
+      in: path
+      description: ID of amenity to update
+      required: true
+      schema:
+        type: UUID
+    - name: name
+      in: body
+      description: Name of the amenity
+      required: false
+      schema:
+        type: string
+  responses:
+    "201":
+      description: Successful operation
+    "400":
+      description: Invalid input
+    "404":
+      description: Amenity not found
+delete:
+  tags:
+    - Amenity Endpoints
+  summary: Delete an amenity by ID
+  description: Delete an amenity by ID
+  parameters:
+    - name: id
+      in: path
+      description: ID of amenity to delete
+      required: true
+      schema:
+        type: UUID
+  responses:
+    "204":
+      description: Successful operation
+    "400":
+      description: Invalid input
+    "404":
+      description: Amenity not found
