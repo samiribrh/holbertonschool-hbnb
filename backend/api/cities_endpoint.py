@@ -10,7 +10,7 @@ from uuid import uuid4
 cities_bp = Blueprint('cities', __name__)
 
 
-@cities_bp.route('/', methods=['GET'])
+@cities_bp.get('/')
 def get_cities():
     raw_data = Crud.get('City')
     data_dict = dict()
@@ -21,7 +21,7 @@ def get_cities():
     return jsonify(data_dict), 200
 
 
-@cities_bp.route('/<city_id>', methods=['GET'])
+@cities_bp.get('/<city_id>')
 def get_city_by_id(city_id):
     raw_data = Crud.get('City', city_id)
     if not raw_data:
@@ -32,7 +32,7 @@ def get_city_by_id(city_id):
     return jsonify(data_dict), 200
 
 
-@cities_bp.route('/', methods=['POST'])
+@cities_bp.post('/')
 def create_city():
     data = request.get_json()
     if not data:
@@ -51,7 +51,7 @@ def create_city():
     return jsonify(DataManager.custom_encoder(city)), 201
 
 
-@cities_bp.route('/<city_id>', methods=['PUT'])
+@cities_bp.put('/<city_id>')
 def update_city(city_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -77,7 +77,7 @@ def update_city(city_id):
     return jsonify({'message': 'City updated'}), 201
 
 
-@cities_bp.route('/<city_id>', methods=['DELETE'])
+@cities_bp.delete('/<city_id>')
 def delete_city(city_id):
     if not city_id:
         return jsonify({'error': 'Missing data'}), 400

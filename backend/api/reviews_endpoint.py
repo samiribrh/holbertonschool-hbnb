@@ -6,7 +6,7 @@ from flask import Blueprint, jsonify, request
 reviews_bp = Blueprint('reviews', __name__)
 
 
-@reviews_bp.route('/<review_id>', methods=['GET'])
+@reviews_bp.get('/<review_id>')
 def get_review_by_id(review_id):
     raw_data = Crud.get('Review', review_id)
     if not raw_data:
@@ -17,7 +17,7 @@ def get_review_by_id(review_id):
     return jsonify(data_dict), 200
 
 
-@reviews_bp.route('/<review_id>', methods=['PUT'])
+@reviews_bp.put('/<review_id>')
 def update_review(review_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -37,7 +37,7 @@ def update_review(review_id):
     return jsonify({'message': 'Review updated'}), 200
 
 
-@reviews_bp.route('/<review_id>', methods=['DELETE'])
+@reviews_bp.delete('/<review_id>')
 def delete_review(review_id):
     if not review_id:
         return jsonify({'error': 'Missing data'}), 400

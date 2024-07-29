@@ -8,7 +8,7 @@ from uuid import uuid4
 amenities_bp = Blueprint('amenities', __name__)
 
 
-@amenities_bp.route('/', methods=['GET'])
+@amenities_bp.get('/')
 def get_amenities():
     raw_data = Crud.get('Amenity')
     data_dict = dict()
@@ -19,7 +19,7 @@ def get_amenities():
     return jsonify(data_dict), 200
 
 
-@amenities_bp.route('/<amenity_id>', methods=['GET'])
+@amenities_bp.get('/<amenity_id>')
 def get_amenity_by_id(amenity_id):
     raw_data = Crud.get('Amenity', amenity_id)
     if not raw_data:
@@ -30,7 +30,7 @@ def get_amenity_by_id(amenity_id):
     return jsonify(data_dict), 200
 
 
-@amenities_bp.route('/', methods=['POST'])
+@amenities_bp.post('/')
 def create_amenity():
     data = request.get_json()
     if not data:
@@ -48,7 +48,7 @@ def create_amenity():
     return jsonify(DataManager.custom_encoder(amenity)), 201
 
 
-@amenities_bp.route('/<amenity_id>', methods=['PUT'])
+@amenities_bp.put('/<amenity_id>')
 def update_amenity(amenity_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -66,7 +66,7 @@ def update_amenity(amenity_id):
     return jsonify({'message': 'Amenity updated'}), 201
 
 
-@amenities_bp.route('/<amenity_id>', methods=['DELETE'])
+@amenities_bp.delete('/<amenity_id>')
 def delete_amenity(amenity_id):
     if not amenity_id:
         return jsonify({'error': 'Missing data'}), 400

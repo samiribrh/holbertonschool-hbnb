@@ -10,7 +10,7 @@ from uuid import uuid4
 users_bp = Blueprint('users', __name__)
 
 
-@users_bp.route('/', methods=['GET'])
+@users_bp.get('/')
 def get_users():
     raw_data = Crud.get('User')
     data_dict = dict()
@@ -24,7 +24,7 @@ def get_users():
     return jsonify(data_dict), 200
 
 
-@users_bp.route('/<user_id>', methods=['GET'])
+@users_bp.get('/<user_id>')
 def get_user_by_id(user_id):
     raw_data = Crud.get('User', user_id)
     if raw_data is None:
@@ -37,7 +37,7 @@ def get_user_by_id(user_id):
     return jsonify(data_dict), 200
 
 
-@users_bp.route('/', methods=['POST'])
+@users_bp.post('/')
 def create_user():
     data = request.get_json()
     if not data:
@@ -60,7 +60,7 @@ def create_user():
     return jsonify(DataManager.custom_encoder(user)), 201
 
 
-@users_bp.route('/<user_id>', methods=['PUT'])
+@users_bp.put('/<user_id>')
 def update_user(user_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -80,7 +80,7 @@ def update_user(user_id):
     return jsonify({'message': 'User updated'}), 201
 
 
-@users_bp.route('/<user_id>', methods=['DELETE'])
+@users_bp.delete('/<user_id>')
 def delete_user(user_id):
     if not user_id:
         return jsonify({'error': 'Missing data'}), 400
@@ -90,7 +90,7 @@ def delete_user(user_id):
     return jsonify({'message': 'User deleted'}), 204
 
 
-@users_bp.route('/<user_id>/reviews', methods=['GET'])
+@users_bp.get('/<user_id>/reviews')
 def get_reviews(user_id):
     if not user_id:
         return jsonify({'error': 'Missing data'}), 400
@@ -102,7 +102,7 @@ def get_reviews(user_id):
             rd_data = DataManager.custom_encoder(data)
             data_dict.update(rd_data)
         if not data_dict:
-            return jsonify({'message': 'No users found'}), 200
+            return jsonify({'message': 'No users found'}), 404
         return jsonify(data_dict), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 200

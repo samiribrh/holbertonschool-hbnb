@@ -11,7 +11,7 @@ from uuid import uuid4
 places_bp = Blueprint('places', __name__)
 
 
-@places_bp.route('/', methods=['GET'])
+@places_bp.get('/')
 def get_places():
     raw_data = Crud.get('Place')
     data_dict = dict()
@@ -29,7 +29,7 @@ def get_places():
     return jsonify(data_dict), 200
 
 
-@places_bp.route('/<place_id>', methods=['GET'])
+@places_bp.get('/<place_id>')
 def get_place_by_id(place_id):
     raw_data = Crud.get('Place', place_id)
     if not raw_data:
@@ -46,7 +46,7 @@ def get_place_by_id(place_id):
     return jsonify(data_dict), 200
 
 
-@places_bp.route('/', methods=['POST'])
+@places_bp.post('/')
 def create_place():
     data = request.get_json()
     if not data:
@@ -77,7 +77,7 @@ def create_place():
     return jsonify(DataManager.custom_encoder(place)), 201
 
 
-@places_bp.route('/<place_id>', methods=['PUT'])
+@places_bp.put('/<place_id>')
 def update_place(place_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -98,7 +98,7 @@ def update_place(place_id):
     return jsonify({'message': 'Place updated'}), 201
 
 
-@places_bp.route('/<place_id>', methods=['DELETE'])
+@places_bp.delete('/<place_id>')
 def delete_place(place_id):
     if not place_id:
         return jsonify({'error': 'Missing data'}), 404
@@ -108,7 +108,7 @@ def delete_place(place_id):
     return jsonify({'message': 'Place deleted'}), 204
 
 
-@places_bp.route('/<place_id>/reviews', methods=['GET'])
+@places_bp.get('/<place_id>/reviews')
 def get_reviews(place_id):
     if not place_id:
         return jsonify({'error': 'Missing data'}), 400
@@ -128,7 +128,7 @@ def get_reviews(place_id):
         session.close()
 
 
-@places_bp.route('/<place_id>/reviews', methods=['POST'])
+@places_bp.post('/<place_id>/reviews')
 def add_reviews(place_id):
     if not place_id:
         return jsonify({'error': 'Missing data'}), 400

@@ -9,7 +9,7 @@ from flask import Blueprint, jsonify
 countries_bp = Blueprint('countries', __name__)
 
 
-@countries_bp.route('/', methods=['GET'])
+@countries_bp.get('/')
 def get_countries():
     raw_data = Crud.get('Country')
     data_dict = dict()
@@ -20,7 +20,7 @@ def get_countries():
     return jsonify(data_dict), 200
 
 
-@countries_bp.route('/<country_code>', methods=['GET'])
+@countries_bp.get('/<country_code>')
 def get_country(country_code):
     raw_data = Crud.get('Country', country_code)
     if not raw_data:
@@ -31,7 +31,7 @@ def get_country(country_code):
     return jsonify(data_dict), 200
 
 
-@countries_bp.route('/<country_code>/cities', methods=['GET'])
+@countries_bp.get('/<country_code>/cities')
 def get_cities(country_code):
     session = get_session()
     country = session.query(Country).filter_by(id=country_code).all()
