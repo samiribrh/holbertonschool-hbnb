@@ -20,7 +20,7 @@ class Validator:
 
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if re.match(email_regex, email) is not None:
-            from Model.user import User
+            from model.user import User
             session = get_session()
             try:
                 users = session.query(User).filter(User.email == email).all()
@@ -37,7 +37,7 @@ class Validator:
     @staticmethod
     def validate_user_by_id(userid: str):
         """Validates user by its id"""
-        from Model.user import User
+        from model.user import User
 
         session = get_session()
         try:
@@ -54,7 +54,7 @@ class Validator:
     @staticmethod
     def validate_address(address: str):
         """Validate address by str"""
-        from Model.place import Place
+        from model.place import Place
 
         session = get_session()
         try:
@@ -71,7 +71,7 @@ class Validator:
     @staticmethod
     def validate_city(city: str):
         """Validates city by its id"""
-        from Model.city import City
+        from model.city import City
 
         session = get_session()
         try:
@@ -88,7 +88,7 @@ class Validator:
     @staticmethod
     def validate_country(country: str):
         """Function for validating a country"""
-        from Model.country import Country
+        from model.country import Country
 
         session = get_session()
         try:
@@ -105,7 +105,7 @@ class Validator:
     @staticmethod
     def validate_city_in_country(city: str, country: str):
         """Validates city by its name and country name"""
-        from Model.city import City
+        from model.city import City
 
         session = get_session()
         try:
@@ -123,7 +123,7 @@ class Validator:
     @staticmethod
     def validate_place(place: str):
         """Validates if place exists"""
-        from Model.place import Place
+        from model.place import Place
 
         session = get_session()
         try:
@@ -140,7 +140,7 @@ class Validator:
     @staticmethod
     def validate_user_owns_place(user: str, place: str):
         """Function for validating user owns place"""
-        from Model.place import Place
+        from model.place import Place
 
         session = get_session()
         try:
@@ -156,30 +156,13 @@ class Validator:
             session.close()
 
     @staticmethod
-    def validate_amenity_by_name(amenity: str):
-        """Function for validating amenity by name"""
-        from Model.amenity import Amenity
-
-        session = get_session()
-        try:
-            amenities = session.query(Amenity).filter(Amenity.name == amenity).all()
-            if amenities:
-                return True
-            return False
-        except Exception as e:
-            session.rollback()
-            raise e
-        finally:
-            session.close()
-
-    @staticmethod
     def validate_amenity(amenity: str):
         """Function for validating amenity"""
-        from Model.amenity import Amenity
+        from model.amenity import Amenity
 
         session = get_session()
         try:
-            amenities = session.query(Amenity).filter(Amenity.id == amenity).all()
+            amenities = session.query(Amenity).filter(Amenity.id == amenity or Amenity.name == amenity).all()
             if amenities:
                 return True
             return False
@@ -192,7 +175,7 @@ class Validator:
     @staticmethod
     def validate_amenity_in_place(amenity: str, place: str):
         """Function for validating amenity inside place"""
-        from Model.place_amenity import PlaceAmenity
+        from model.place_amenity import PlaceAmenity
 
         session = get_session()
         try:
