@@ -1,7 +1,7 @@
 """Module containing main app for HBnB project"""
 from services.Initializer.initializer import initialize_services
 from services.Initializer.create_app import create_app
-from flask import redirect, url_for
+from flask import send_from_directory
 
 app = create_app()
 
@@ -11,11 +11,11 @@ def main():
 
     @app.route('/', methods=['GET'])
     def index():
-        return redirect(url_for('login'))
-
-    @app.route('/login', methods=['GET'])
-    def login():
         return "Hi!"
+
+    @app.route('/static/<path:filename>')
+    def static_files(filename):
+        return send_from_directory(app.static_folder, filename)
 
     app.run(port=5000, debug=True)
 
