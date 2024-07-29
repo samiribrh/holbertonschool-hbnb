@@ -269,6 +269,20 @@ Werkzeug = ">=0.14"
 asymmetric-crypto = ["cryptography (>=3.3.1)"]
 
 [[package]]
+name = "flask-swagger-ui"
+version = "4.11.1"
+description = "Swagger UI blueprint for Flask"
+optional = false
+python-versions = "*"
+files = [
+    {file = "flask-swagger-ui-4.11.1.tar.gz", hash = "sha256:a370199a780d678b32e38f1be10d4d81efa0ee63e9fe2fb766ff1a4b6c37dac8"},
+    {file = "flask_swagger_ui-4.11.1-py3-none-any.whl", hash = "sha256:c951928fe4592d3561b543e0e1ca32703f55d3474de86c894a9d27f795d96c83"},
+]
+
+[package.dependencies]
+flask = "*"
+
+[[package]]
 name = "greenlet"
 version = "3.0.3"
 description = "Lightweight in-process concurrent programming"
@@ -895,4 +909,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "01c32771f534f08096ff2c776338cd63bd80b982942ac387587fd6acf1bf21ba"
+content-hash = "6916f2c7dbd3dc75d4e6436823df010648a47793c4c000a0515c6edf72412708"
