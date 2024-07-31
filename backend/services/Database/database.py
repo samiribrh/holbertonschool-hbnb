@@ -1,19 +1,12 @@
 """Module containing Database Initialization script"""
+from core.config import Config
 from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine
-import os
 
 load_dotenv()
 
-DBTYPE = os.getenv('DBTYPE')
-DBUSER = os.getenv('DBUSER')
-DBPASS = os.getenv('DBPASS')
-HOSTNAME = os.getenv('HOSTNAME')
-DBNAME = os.getenv('DBNAME')
-DBPORT = os.getenv('DBPORT')
-
-DB_URL = f"{DBTYPE}://{DBUSER}:{DBPASS}@{HOSTNAME}:{DBPORT}/{DBNAME}"
+DB_URL = Config.SQLALCHEMY_DATABASE_URL
 
 # Creating the engine
 engine = create_engine(DB_URL)

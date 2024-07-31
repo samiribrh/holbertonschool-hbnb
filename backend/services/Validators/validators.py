@@ -1,5 +1,5 @@
 """Module Containing services for model"""
-from services.database import get_session
+from services.Database.database import get_session
 
 
 class Validator:
@@ -37,19 +37,12 @@ class Validator:
     @staticmethod
     def validate_user_by_id(userid: str):
         """Validates user by its id"""
-        from model.user import User
+        from services.DataManipulation.crud import Crud
 
-        session = get_session()
-        try:
-            users = session.query(User).filter(User.id == userid).all()
-            if not users:
-                return False
-            return True
-        except Exception as e:
-            session.rollback()
-            raise e
-        finally:
-            session.close()
+        user = Crud.get('User', userid)
+        if not user:
+            return False
+        return True
 
     @staticmethod
     def validate_address(address: str):
@@ -71,36 +64,22 @@ class Validator:
     @staticmethod
     def validate_city(city: str):
         """Validates city by its id"""
-        from model.city import City
+        from services.DataManipulation.crud import Crud
 
-        session = get_session()
-        try:
-            cities = session.query(City).filter(City.id == city).all()
-            if not cities:
-                return False
-            return True
-        except Exception as e:
-            session.rollback()
-            raise e
-        finally:
-            session.close()
+        city = Crud.get('City', city)
+        if not city:
+            return False
+        return True
 
     @staticmethod
     def validate_country(country: str):
         """Function for validating a country"""
-        from model.country import Country
+        from services.DataManipulation.crud import Crud
 
-        session = get_session()
-        try:
-            countries = session.query(Country).filter(Country.id == country.upper()).all()
-            if not countries:
-                return False
-            return True
-        except Exception as e:
-            session.rollback()
-            raise e
-        finally:
-            session.close()
+        country = Crud.get('Country', country.upper())
+        if not country:
+            return False
+        return True
 
     @staticmethod
     def validate_city_in_country(city: str, country: str):
@@ -123,19 +102,12 @@ class Validator:
     @staticmethod
     def validate_place(place: str):
         """Validates if place exists"""
-        from model.place import Place
+        from services.DataManipulation.crud import Crud
 
-        session = get_session()
-        try:
-            places = session.query(Place).filter(Place.id == place).all()
-            if not places:
-                return False
-            return True
-        except Exception as e:
-            session.rollback()
-            raise e
-        finally:
-            session.close()
+        place = Crud.get('Place', place)
+        if not place:
+            return False
+        return True
 
     @staticmethod
     def validate_user_owns_place(user: str, place: str):

@@ -2,7 +2,7 @@
 from services.DataManipulation.datamanager import DataManager
 from services.DataManipulation.crud import Crud
 from services.Validators.validators import Validator
-from services.database import get_session
+from services.Database.database import get_session
 from model.city import City
 from flask import Blueprint, jsonify, request
 from uuid import uuid4

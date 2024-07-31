@@ -1,23 +1,22 @@
 """Module containing Initializers for the project"""
+from core.config import Config
 from dotenv import load_dotenv
-from services.database import get_session
+from services.Database.database import get_session
 from model.country import Country
-import os
 
 load_dotenv()
 
-countryfile = os.getenv('COUNTRYFILE')
+countryfile = Config.COUNTRYFILE
 
 
 def initialize_countries():
     """Function to initialize the countries"""
     from dotenv import load_dotenv
     import json
-    import os
 
     load_dotenv()
 
-    countryfile = os.getenv('COUNTRYFILE')
+    countryfile = Config.COUNTRYFILE
 
     session = get_session()
     try:

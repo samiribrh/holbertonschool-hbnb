@@ -1,5 +1,5 @@
 """Module for CRUD operations."""
-from services.database import get_session
+from services.Database.database import get_session
 from model.amenity import Amenity
 from model.city import City
 from model.country import Country

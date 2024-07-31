@@ -1,7 +1,7 @@
 """Module for user endpoint"""
 from services.DataManipulation.datamanager import DataManager
 from services.DataManipulation.crud import Crud
-from services.database import get_session
+from services.Database.database import get_session
 from model.user import User
 from model.review import Review
 from flask import Blueprint, jsonify, request

@@ -1,6 +1,5 @@
 """Module containing DataManager class"""
-from services.Validators.validators import Validator
-from services.database import get_session
+from services.Database.database import get_session
 
 
 class DataManager:
@@ -30,13 +29,15 @@ class DataManager:
     @staticmethod
     def add_amenity_to_place(user: str, amenity: str, place: str):
         """Method for adding an amenity to a place"""
+        from services.Validators.validators import Validator
+
         session = get_session()
         try:
             if not Validator.validate_user_owns_place(user, place):
                 raise ValueError("User does not own place")
             if Validator.validate_amenity_in_place(amenity, place):
                 raise ValueError("Amenity already exists in place")
-            from Model.place_amenity import PlaceAmenity
+            from model.place_amenity import PlaceAmenity
             new_pl_am = PlaceAmenity(place_id=place, amenity_id=amenity)
             DataManager.save_to_db(new_pl_am)
         except Exception as e:

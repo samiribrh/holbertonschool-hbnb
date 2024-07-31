@@ -1,6 +1,6 @@
 """Module for User class"""
 from services.Validators.validators import Validator
-from services.database import Base, get_session
+from services.Database.database import Base, get_session
 from model.review import Review
 from sqlalchemy import Column, String, DateTime, CheckConstraint
 from sqlalchemy.orm import validates

@@ -1,5 +1,5 @@
 """Module containing Country class"""
-from services.database import Base
+from services.Database.database import Base
 from sqlalchemy import Column, VARCHAR, DateTime
 from datetime import datetime
 

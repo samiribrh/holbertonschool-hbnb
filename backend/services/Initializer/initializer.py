@@ -1,6 +1,6 @@
 """File for initializing services."""
 from .countries_initializer import initialize_countries
-from services.database import initialize_database
+from services.Database.database import initialize_database
 
 
 def initialize_services():
