@@ -3,7 +3,14 @@ FROM python:3.12-slim
 RUN mkdir /app
 WORKDIR /app
 
-# Installing Poetry
+# Installing dependencies
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libmariadb-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installing poetry
 RUN pip install --upgrade pip \
     && pip install poetry
 
@@ -16,9 +23,6 @@ RUN poetry install --no-root
 # Copying the rest of the files
 COPY . /app/
 
-EXPOSE 5000
+EXPOSE 8000
 
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
-
-CMD ["poetry", "run", "flask", "run"]
+CMD ["poetry", "run", "gunicorn", "-w", "1", "--threads", "1", "-b", "0.0.0.0:8000", "app:app"]
