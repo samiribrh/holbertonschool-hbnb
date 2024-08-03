@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorMessage = document.getElementById('error-message');
     const loginLink = document.getElementById('login-link');
     const logoutLink = document.getElementById('logout-link');
-
+    
     if (loginForm) {
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const email = loginForm.email.value;
             const password = loginForm.password.value;
-
+            
             try {
-                const response = await loginUser(email, password);
+                const response = await loginUser(ip, email, password);
                 if (response.ok) {
                     const data = await response.json();
                     document.cookie = `token=${data.access_token}; path=/; SameSite=Strict`; // Store token
@@ -45,16 +45,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-async function loginUser(email, password) {
+const ip = '127.0.0.1:5000';
+
+async function loginUser(ip, email, password) {
+    const url_login = 'http://'.concat(ip, '/login');
+    
     try {
-        const response = await fetch('http://127.0.0.1:5000/login', {
+        const response = await fetch(url_login, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ email, password })
         });
-
+        
         return response;
     } catch (error) {
         console.error('Error during login:', error);
@@ -80,7 +84,7 @@ function checkAuthentication() {
     // Fetch places only if 'places-list' is present
     const placesList = document.getElementById('places-list');
     if (placesList) {
-        fetchPlaces(token);
+        fetchPlaces(ip, token);
     }
 }
 
@@ -106,11 +110,13 @@ function logout() {
     checkAuthentication();
 }
 
-const fetchPlaces = async (token) => {
+const fetchPlaces = async (ip, token) => {
     try {
+        const url_places = 'http://'.concat(ip, '/places');
+        
         const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
 
-        const response = await fetch('http://127.0.0.1:5000/places', { headers });
+        const response = await fetch(url_places, { headers });
 
         if (response.ok) {
             const places = await response.json();
