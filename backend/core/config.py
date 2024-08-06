@@ -6,13 +6,14 @@ load_dotenv("../")
 
 class Config:
     DBTYPE = os.getenv('DBTYPE', 'postgresql+psycopg2')
-    DBUSER = os.getenv('DBUSER', 'root')
-    DBPASS = os.getenv('DBPASSWORD', 'password')
+    DBUSER = os.getenv('POSTGRES_USER', 'root')
+    DBPASS = os.getenv('POSTGRES_PASSWORD', 'password')
     HOSTNAME = os.getenv('HOSTNAME', 'localhost')
-    DBNAME = os.getenv('DBNAME', 'database')
+    DBNAME = os.getenv('POSTGRES_DB', 'database')
     DBPORT = os.getenv('DBPORT', 5432)
 
     SQLALCHEMY_DATABASE_URL = f"{DBTYPE}://{DBUSER}:{DBPASS}@{HOSTNAME}:{DBPORT}/{DBNAME}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'your_jwt_secret_key')
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'jwt_secret_key')
+    STATIC_FOLDER = os.getenv('STATIC_FOLDER', 'backend/static')
     COUNTRYFILE = os.getenv('COUNTRYFILE', 'backend/data/countries.json')

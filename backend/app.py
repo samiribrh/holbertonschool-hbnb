@@ -1,25 +1,20 @@
 """Module containing main app for HBnB project"""
 from services.Initializer.initializer import initialize_services
 from services.Initializer.create_app import FlaskApp
-from flask import send_from_directory
 
 app = FlaskApp().get_app()
 
+initialize_services()
 
-def main():
-    initialize_services()
-    print("Services Initialized")
-
-    @app.get('/')
-    def index():
-        return "Hi!"
-
-    @app.route('/static/<path:filename>')
-    def static_files(filename):
-        return send_from_directory(app.static_folder, filename)
-
-    app.run(host='0.0.0.0', port=8000, debug=True)
+app.options = {
+        'bind': '0.0.0.0:8000',
+        'workers': 1,
+        'threads': 1,
+        'accesslog': '-',
+        'access_log_format': '%(h)s - - [%(t)s] "%(r)s" %(s)s "%(f)s"',
+    }
 
 
-if __name__ == '__main__':
-    main()
+@app.get('/')
+def index():
+    return "Hi!"

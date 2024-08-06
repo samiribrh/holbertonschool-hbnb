@@ -6,6 +6,8 @@ from api.cities_endpoint import cities_bp
 from api.amenities_endpoint import amenities_bp
 from api.places_endpoint import places_bp
 from api.reviews_endpoint import reviews_bp
+from api.status_endpoint import status_bp
+from api.static_endpoint import static_bp
 
 
 def define_blueprints(app):
@@ -27,7 +29,13 @@ def define_blueprints(app):
     # Reviews endpoint
     app.register_blueprint(reviews_bp, url_prefix='/reviews')
 
+    # Static endpoint
+    app.register_blueprint(static_bp, url_prefix='/static')
+
     # Swagger endpoint
     app.register_blueprint(swagger_blueprint, url_prefix=SWAGGER_URL)
+
+    # Status endpoint
+    app.register_blueprint(status_bp, url_prefix='/status')
 
     return app

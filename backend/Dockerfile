@@ -1,5 +1,6 @@
 FROM python:3.12-slim
 
+# Creating the working directory
 RUN mkdir /app
 WORKDIR /app
 
@@ -8,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     libmariadb-dev \
     gcc \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Installing poetry
@@ -17,12 +19,17 @@ RUN pip install --upgrade pip \
 # Copying the project files
 COPY pyproject.toml poetry.lock /app/
 
-# Installing the dependencies
+# Installing the package dependencies
 RUN poetry install --no-root
 
 # Copying the rest of the files
-COPY . /app/
+COPY ../ /app/
 
+# Adding execute permissions to the entrypoint
+RUN chmod +x /app/entrypoint.sh
+
+# Exposing the port
 EXPOSE 8000
 
-CMD ["poetry", "run", "gunicorn", "-w", "1", "--threads", "1", "-b", "0.0.0.0:8000", "app:app"]
+# Running the entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]
