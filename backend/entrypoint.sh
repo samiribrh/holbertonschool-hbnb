@@ -6,6 +6,6 @@ poetry run python app.py &
 
 sleep 3
 
-poetry run python run_gunicorn.py
+poetry run python wsgi.py
 
 exec "$@"

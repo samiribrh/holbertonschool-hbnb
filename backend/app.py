@@ -7,12 +7,12 @@ app = FlaskApp().get_app()
 initialize_services()
 
 app.options = {
-        'bind': '0.0.0.0:8000',
-        'workers': 1,
-        'threads': 1,
-        'accesslog': '-',
-        'access_log_format': '%(h)s - - [%(t)s] "%(r)s" %(s)s "%(f)s"',
-    }
+    'bind': '0.0.0.0:8000',
+    'workers': 1,
+    'threads': 1,
+    'accesslog': '-',
+    'access_log_format': '%(h)s - - [%(t)s] "%(r)s" %(s)s "%(f)s"',
+}
 
 
 @app.get('/')
