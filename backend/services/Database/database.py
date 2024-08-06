@@ -3,6 +3,7 @@ from core.config import Config
 from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine
+import psycopg2
 
 load_dotenv()
 
@@ -24,6 +25,7 @@ def get_session():
 
 
 def initialize_database():
+    """Function to initialize the database"""
 
     # Create all tables in the engine
     Base.metadata.create_all(engine)
