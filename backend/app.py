@@ -1,13 +1,14 @@
 """Module containing main app for HBnB project"""
 from services.Initializer.initializer import initialize_services
-from services.Initializer.create_app import create_app
+from services.Initializer.create_app import FlaskApp
 from flask import send_from_directory
 
-app = create_app()
+app = FlaskApp().get_app()
 
 
 def main():
     initialize_services()
+    print("Services Initialized")
 
     @app.get('/')
     def index():
