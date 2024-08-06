@@ -19,7 +19,8 @@ def get_places():
         rd_data = DataManager.custom_encoder(data)
         amenities = []
         session = get_session()
-        plc_amnt = session.query(PlaceAmenity).filter(PlaceAmenity.place_id == data.id).all()
+        plc_amnt = (session.query(PlaceAmenity)
+                    .filter(PlaceAmenity.place_id == data.id).all())
         for amenity in plc_amnt:
             amenities.append(amenity.amenity_id)
         rd_data[data.id]['amenities'] = amenities
@@ -37,7 +38,8 @@ def get_place_by_id(place_id):
     rd_data = DataManager.custom_encoder(raw_data)
     amenities = []
     session = get_session()
-    plc_amnt = session.query(PlaceAmenity).filter(PlaceAmenity.place_id == place_id).all()
+    plc_amnt = (session.query(PlaceAmenity)
+                .filter(PlaceAmenity.place_id == place_id).all())
     for amenity in plc_amnt:
         amenities.append(amenity.amenity_id)
     rd_data[place_id]['amenities'] = amenities
@@ -62,14 +64,16 @@ def create_place():
     bathrooms = data.get('bathrooms')
     price = data.get('price')
     max_guests = data.get('max_guests')
-    if (not name or not address or not city or not latitude or not longitude or not host or
-            not num_of_rooms or not bathrooms or not price or not max_guests):
+    if (not name or not address or not city or not latitude or not longitude
+            or not host or not num_of_rooms or not bathrooms or not price
+            or not max_guests):
         return jsonify({'error': 'Missing data'}), 400
     try:
         new_place_id = str(uuid4())
-        place = Place(id=new_place_id, name=name, description=description, address=address, city=city,
-                      latitude=latitude, longitude=longitude, host=host, num_of_rooms=num_of_rooms,
-                      bathrooms=bathrooms, price=price, max_guests=max_guests)
+        place = Place(id=new_place_id, name=name, description=description,
+                      address=address, city=city, latitude=latitude, longitude=longitude,
+                      host=host, num_of_rooms=num_of_rooms, bathrooms=bathrooms,
+                      price=price, max_guests=max_guests)
         DataManager.save_to_db(place)
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
