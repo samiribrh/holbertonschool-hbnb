@@ -8,6 +8,11 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - mynetwork
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "hbnb", "-d", "hbnb_v1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   app:
     build: ./backend
@@ -20,6 +25,11 @@ services:
       - db
     networks:
       - mynetwork
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   db_data:
