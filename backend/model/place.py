@@ -9,7 +9,6 @@ from services.Database.database import Base, get_session
 from services.Validators.validators import Validator
 
 
-
 class Place(Base):
     """The Place Class"""
     __tablename__ = 'places'

@@ -7,6 +7,7 @@ from api.places_endpoint import places_bp
 from api.reviews_endpoint import reviews_bp
 from api.static_endpoint import static_bp
 from api.status_endpoint import status_bp
+from api.users_endpoint import users_bp
 
 from services.swagger import swagger_blueprint, SWAGGER_URL
 
