@@ -15,5 +15,5 @@ class Config:
     SQLALCHEMY_DATABASE_URL = f"{DBTYPE}://{DBUSER}:{DBPASS}@{HOSTNAME}:{DBPORT}/{DBNAME}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'jwt_secret_key')
-    STATIC_FOLDER = os.getenv('STATIC_FOLDER', 'backend/static')
-    COUNTRYFILE = os.getenv('COUNTRYFILE', 'backend/data/countries.json')
+    STATIC_FOLDER = os.getenv('STATIC_FOLDER', 'app/static')
+    COUNTRYFILE = os.getenv('COUNTRYFILE', 'app/data/countries.json')
