@@ -1,5 +1,6 @@
 """Module for reviews endpoint"""
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required
 
 from services.DataManipulation.crud import Crud
 from services.DataManipulation.datamanager import DataManager
@@ -20,6 +21,7 @@ def get_review_by_id(review_id):
 
 
 @reviews_bp.put('/<review_id>')
+@jwt_required
 def update_review(review_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -40,6 +42,7 @@ def update_review(review_id):
 
 
 @reviews_bp.delete('/<review_id>')
+@jwt_required
 def delete_review(review_id):
     if not review_id:
         return jsonify({'error': 'Missing data'}), 400

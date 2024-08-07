@@ -2,7 +2,7 @@
 from uuid import uuid4
 
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import jwt_required
 
 from model.city import City
 
@@ -38,6 +38,7 @@ def get_city_by_id(city_id):
 
 
 @cities_bp.post('/')
+@jwt_required
 def create_city():
     data = request.get_json()
     if not data:
@@ -57,6 +58,7 @@ def create_city():
 
 
 @cities_bp.put('/<city_id>')
+@jwt_required
 def update_city(city_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -83,6 +85,7 @@ def update_city(city_id):
 
 
 @cities_bp.delete('/<city_id>')
+@jwt_required
 def delete_city(city_id):
     if not city_id:
         return jsonify({'error': 'Missing data'}), 400

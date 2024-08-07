@@ -2,6 +2,7 @@
 from uuid import uuid4
 
 from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required
 
 from model.amenity import Amenity
 
@@ -35,6 +36,7 @@ def get_amenity_by_id(amenity_id):
 
 
 @amenities_bp.post('/')
+@jwt_required
 def create_amenity():
     data = request.get_json()
     if not data:
@@ -53,6 +55,7 @@ def create_amenity():
 
 
 @amenities_bp.put('/<amenity_id>')
+@jwt_required
 def update_amenity(amenity_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -71,6 +74,7 @@ def update_amenity(amenity_id):
 
 
 @amenities_bp.delete('/<amenity_id>')
+@jwt_required
 def delete_amenity(amenity_id):
     if not amenity_id:
         return jsonify({'error': 'Missing data'}), 400
