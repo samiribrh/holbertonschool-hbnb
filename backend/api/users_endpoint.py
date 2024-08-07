@@ -2,10 +2,9 @@
 from services.DataManipulation.datamanager import DataManager
 from services.DataManipulation.crud import Crud
 from services.Database.database import get_session
-from model.user import User
 from model.review import Review
 from flask import Blueprint, jsonify, request
-from uuid import uuid4
+from flask_jwt_extended import jwt_required
 
 users_bp = Blueprint('users', __name__)
 
@@ -18,6 +17,7 @@ def get_users():
         rd_data = DataManager.custom_encoder(data)
         for key, value in rd_data.items():
             value.pop('role')
+            value.pop('password')
         data_dict.update(rd_data)
     if not data_dict:
         return jsonify({'message': 'No users found'}), 200
@@ -32,32 +32,10 @@ def get_user_by_id(user_id):
     rd_data = DataManager.custom_encoder(raw_data)
     for key, value in rd_data.items():
         value.pop('role')
+        value.pop('password')
     data_dict = dict()
     data_dict.update(rd_data)
     return jsonify(data_dict), 200
-
-
-@users_bp.post('/')
-def create_user():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': 'No data'}), 400
-    email = data.get('email')
-    password = data.get('password')
-    first_name = data.get('first_name')
-    last_name = data.get('last_name')
-    role = data.get('role')
-    if not (email and password and first_name and last_name):
-        return jsonify({'error': 'Missing data'}), 400
-    try:
-        new_user_id = str(uuid4())
-        new_user = User(id=new_user_id, email=email, password=password,
-                        first_name=first_name, last_name=last_name, role=role)
-        DataManager.save_to_db(new_user)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
-    user = Crud.get('User', new_user_id)
-    return jsonify(DataManager.custom_encoder(user)), 201
 
 
 @users_bp.put('/<user_id>')

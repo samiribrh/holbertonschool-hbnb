@@ -4,7 +4,7 @@ set -e
 
 poetry run python app.py &
 
-sleep 3
+sleep 1
 
 poetry run python wsgi.py
 

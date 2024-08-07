@@ -6,7 +6,7 @@ from sqlalchemy import Column, String, DateTime, CheckConstraint
 from sqlalchemy.orm import validates
 from datetime import datetime
 from uuid import uuid4
-import hashlib
+from werkzeug.security import generate_password_hash
 
 
 class User(Base):
@@ -58,7 +58,7 @@ class User(Base):
             raise ValueError("Password must contain at least one number")
 
         # Hash using sha256
-        hashed_password = hashlib.sha256(value.encode('utf-8')).hexdigest()
+        hashed_password = generate_password_hash(value)
         return hashed_password
 
     @validates('first_name')
