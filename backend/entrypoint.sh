@@ -2,6 +2,8 @@
 
 set -e
 
+poetry run alembic upgrade head
+
 poetry run python app.py &
 
 sleep 1
