@@ -1,11 +1,16 @@
 """Module for user endpoint"""
-from services.DataManipulation.datamanager import DataManager
-from services.DataManipulation.crud import Crud
-from services.Validators.validators import Validator
-from services.Database.database import get_session
-from model.city import City
-from flask import Blueprint, jsonify, request
 from uuid import uuid4
+
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
+
+from model.city import City
+
+from services.Database.database import get_session
+from services.DataManipulation.crud import Crud
+from services.DataManipulation.datamanager import DataManager
+from services.Validators.validators import Validator
+
 
 cities_bp = Blueprint('cities', __name__)
 

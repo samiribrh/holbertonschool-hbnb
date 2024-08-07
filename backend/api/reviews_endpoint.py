@@ -1,7 +1,9 @@
 """Module for reviews endpoint"""
-from services.DataManipulation.datamanager import DataManager
-from services.DataManipulation.crud import Crud
 from flask import Blueprint, jsonify, request
+
+from services.DataManipulation.crud import Crud
+from services.DataManipulation.datamanager import DataManager
+
 
 reviews_bp = Blueprint('reviews', __name__)
 

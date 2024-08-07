@@ -1,9 +1,13 @@
 """Module for amenities endpoint"""
-from services.DataManipulation.datamanager import DataManager
-from services.DataManipulation.crud import Crud
-from model.amenity import Amenity
-from flask import Blueprint, jsonify, request
 from uuid import uuid4
+
+from flask import Blueprint, jsonify, request
+
+from model.amenity import Amenity
+
+from services.DataManipulation.crud import Crud
+from services.DataManipulation.datamanager import DataManager
+
 
 amenities_bp = Blueprint('amenities', __name__)
 

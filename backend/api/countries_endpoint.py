@@ -1,10 +1,13 @@
 """Module for user endpoint"""
-from services.DataManipulation.datamanager import DataManager
-from services.DataManipulation.crud import Crud
-from services.Database.database import get_session
-from model.country import Country
-from model.city import City
 from flask import Blueprint, jsonify
+
+from model.city import City
+from model.country import Country
+
+from services.Database.database import get_session
+from services.DataManipulation.crud import Crud
+from services.DataManipulation.datamanager import DataManager
+
 
 countries_bp = Blueprint('countries', __name__)
 

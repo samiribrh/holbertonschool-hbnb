@@ -1,4 +1,6 @@
+"""Swagger UI configuration for the API documentation."""
 from flask_swagger_ui import get_swaggerui_blueprint
+
 
 SWAGGER_URL = '/swagger'
 API_URL = '/static/swagger/swagger.json'

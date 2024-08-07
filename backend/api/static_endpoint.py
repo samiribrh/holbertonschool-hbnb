@@ -1,5 +1,8 @@
-from core.config import Config
+"""Module for serving static files."""
 from flask import Blueprint, send_from_directory
+
+from core.config import Config
+
 
 static_bp = Blueprint('static', __name__)
 

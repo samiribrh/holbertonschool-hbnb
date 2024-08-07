@@ -1,5 +1,6 @@
 """Endpoint for status of the app"""
-from flask import Blueprint, jsonify
+from flask import Blueprint
+
 
 status_bp = Blueprint('status', __name__)
 

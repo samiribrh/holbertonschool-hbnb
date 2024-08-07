@@ -1,11 +1,16 @@
-from model.user import User
-from services.DataManipulation.datamanager import DataManager
-from services.DataManipulation.crud import Crud
-from services.Database.database import get_session
-from flask import Blueprint, request, jsonify
+"""Authorization Endpoints"""
+from uuid import uuid4
+
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
 from werkzeug.security import check_password_hash
-from uuid import uuid4
+
+from model.user import User
+
+from services.Database.database import get_session
+from services.DataManipulation.crud import Crud
+from services.DataManipulation.datamanager import DataManager
+
 
 auth_bp = Blueprint('auth', __name__)
 

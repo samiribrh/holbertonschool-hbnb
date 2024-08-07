@@ -1,5 +1,7 @@
-from app import app
+"""Module to run the Flask app with Gunicorn."""
 from gunicorn.app.base import BaseApplication
+
+from app import app
 
 
 class StandaloneApplication(BaseApplication):

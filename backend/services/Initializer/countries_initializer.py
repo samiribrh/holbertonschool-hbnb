@@ -1,8 +1,12 @@
 """Module containing Initializers for the project"""
-from core.config import Config
 from dotenv import load_dotenv
+
+from core.config import Config
+
 from services.Database.database import get_session
+
 from model.country import Country
+
 
 load_dotenv()
 

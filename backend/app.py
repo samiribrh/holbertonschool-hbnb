@@ -1,6 +1,7 @@
 """Module containing main app for HBnB project"""
-from services.Initializer.initializer import initialize_services
 from services.Initializer.create_app import FlaskApp
+from services.Initializer.initializer import initialize_services
+
 
 app = FlaskApp().get_app()
 

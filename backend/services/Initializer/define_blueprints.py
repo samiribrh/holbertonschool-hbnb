@@ -1,14 +1,14 @@
 """Module to define blueprints for Flask app"""
-from services.swagger import swagger_blueprint, SWAGGER_URL
-from api.users_endpoint import users_bp
-from api.auth import auth_bp
-from api.countries_endpoint import countries_bp
-from api.cities_endpoint import cities_bp
 from api.amenities_endpoint import amenities_bp
+from api.auth import auth_bp
+from api.cities_endpoint import cities_bp
+from api.countries_endpoint import countries_bp
 from api.places_endpoint import places_bp
 from api.reviews_endpoint import reviews_bp
-from api.status_endpoint import status_bp
 from api.static_endpoint import static_bp
+from api.status_endpoint import status_bp
+
+from services.swagger import swagger_blueprint, SWAGGER_URL
 
 
 def define_blueprints(app):

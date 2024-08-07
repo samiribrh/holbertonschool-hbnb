@@ -1,9 +1,11 @@
 """Module containing Database Initialization script"""
-from core.config import Config
 from dotenv import load_dotenv
-from sqlalchemy.orm import sessionmaker, declarative_base
+
 from sqlalchemy import create_engine
-import psycopg2
+from sqlalchemy.orm import sessionmaker, declarative_base
+
+from core.config import Config
+
 
 load_dotenv()
 
