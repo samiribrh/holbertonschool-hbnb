@@ -8,8 +8,8 @@ initialize_services()
 
 app.options = {
     'bind': '0.0.0.0:8000',
-    'workers': 1,
-    'threads': 1,
+    'workers': 2,
+    'threads': 2,
     'accesslog': '-',
     'access_log_format': '%(h)s - - [%(t)s] "%(r)s" %(s)s "%(f)s"',
 }
