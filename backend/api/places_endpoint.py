@@ -54,7 +54,7 @@ def get_place_by_id(place_id):
 
 
 @places_bp.post('/')
-@jwt_required
+@jwt_required()
 def create_place():
     data = request.get_json()
     if not data:
@@ -88,7 +88,7 @@ def create_place():
 
 
 @places_bp.put('/<place_id>')
-@jwt_required
+@jwt_required()
 def update_place(place_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -110,7 +110,7 @@ def update_place(place_id):
 
 
 @places_bp.delete('/<place_id>')
-@jwt_required
+@jwt_required()
 def delete_place(place_id):
     if not place_id:
         return jsonify({'error': 'Missing data'}), 404
@@ -141,7 +141,7 @@ def get_reviews(place_id):
 
 
 @places_bp.post('/<place_id>/reviews')
-@jwt_required
+@jwt_required()
 def add_reviews(place_id):
     if not place_id:
         return jsonify({'error': 'Missing data'}), 400

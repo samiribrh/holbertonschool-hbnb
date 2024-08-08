@@ -42,7 +42,7 @@ def get_user_by_id(user_id):
 
 
 @users_bp.put('/<user_id>')
-@jwt_required
+@jwt_required()
 def update_user(user_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -63,7 +63,7 @@ def update_user(user_id):
 
 
 @users_bp.delete('/<user_id>')
-@jwt_required
+@jwt_required()
 def delete_user(user_id):
     if not user_id:
         return jsonify({'error': 'Missing data'}), 400

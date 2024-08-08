@@ -38,7 +38,7 @@ def get_city_by_id(city_id):
 
 
 @cities_bp.post('/')
-@jwt_required
+@jwt_required()
 def create_city():
     data = request.get_json()
     if not data:
@@ -58,7 +58,7 @@ def create_city():
 
 
 @cities_bp.put('/<city_id>')
-@jwt_required
+@jwt_required()
 def update_city(city_id):
     datatoupdate = request.get_json()
     if not datatoupdate:
@@ -85,7 +85,7 @@ def update_city(city_id):
 
 
 @cities_bp.delete('/<city_id>')
-@jwt_required
+@jwt_required()
 def delete_city(city_id):
     if not city_id:
         return jsonify({'error': 'Missing data'}), 400
