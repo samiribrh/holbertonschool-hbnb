@@ -1,6 +1,8 @@
 # File to exclude unnecessary or sensitive files from GitHub
 __pycache__/
-Data/
+data/
+!.gitignore
+!data/countries.json
 .env
 env/
 .idea/
