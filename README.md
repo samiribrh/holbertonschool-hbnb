@@ -52,7 +52,21 @@ Once the containers are up and running, you can access the application at `http:
 
 `POSTGRES_HOST_AUTH_METHOD`: Postgres host authentication method.  
 
-`POSTGRES_INITDB_ARGS`: Postgres initialization arguments.  
+`POSTGRES_INITDB_ARGS`: Postgres initialization arguments.
+
+`REDIS_HOST`: Redis host.
+
+`REDIS_PORT`: Redis port.
+
+`REDIS_PASSWORD`: Redis password.
+
+`REDIS_DB`: Redis database.
+
+`SMTP_HOST`: SMTP host server.
+
+`SMTP_MAIL`: SMTP mail address.
+
+`SMTP_PASSWORD`: SMTP Mail password.
 
 `PYTHONPATH`: Python path.  
 
