@@ -39,7 +39,6 @@ def send_verification(to_email: str, verification_code: str):
         server.starttls()
         server.login(smtp_mail, smtp_password)
         server.send_message(msg)
-        print(f"Verification code {verification_code} sent to {to_email}")
     except Exception as e:
         print(f"Failed to send email: {e}")
     finally:

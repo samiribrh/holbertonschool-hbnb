@@ -67,8 +67,6 @@ def verify():
 
     try:
         verification_code = redis_cli.get(f'verification_code_{email}')
-        print(f"Verification code in redis is: type: {type(verification_code)}, value: {verification_code}")
-        print(f"Code coming from request is: type: {type(code)}, value: {code}")
         if not verification_code:
             return jsonify({'error': 'Verification code expired or not found'}), 400
 
