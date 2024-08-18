@@ -1,5 +1,6 @@
 services:
   db:
+    container_name: db
     image: postgres:latest
     env_file: ./backend/.env
     ports:
@@ -15,6 +16,7 @@ services:
       retries: 5
 
   app:
+    container_name: app
     build: ./backend
     env_file: ./backend/.env
     ports:
@@ -22,7 +24,10 @@ services:
     volumes:
       - ./backend:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - mynetwork
     healthcheck:
@@ -31,8 +36,25 @@ services:
       timeout: 10s
       retries: 5
 
+  redis:
+    container_name: redis
+    image: redis:latest
+    env_file: ./backend/.env
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mynetwork
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 volumes:
   db_data:
+  redis_data:
 
 networks:
   mynetwork:
