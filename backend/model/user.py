@@ -2,7 +2,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from sqlalchemy import Column, String, DateTime, CheckConstraint
+from sqlalchemy import Column, String, Boolean, DateTime, CheckConstraint
 from sqlalchemy.orm import validates
 
 from werkzeug.security import generate_password_hash
@@ -24,6 +24,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow(), onupdate=datetime.utcnow(), nullable=False)
     role = Column(String(5), default='user', nullable=False)
+    is_verified = Column(Boolean, default=False, nullable=False)
 
     __table_args__ = (
         CheckConstraint(role.in_(['user', 'admin', 'owner']), name='role_check'),

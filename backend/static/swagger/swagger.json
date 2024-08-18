@@ -15,6 +15,10 @@
       "$ref": "./users_endpoint/users_id_reviews.yaml"
     },
 
+    "/auth/register": {
+      "$ref": "./auth_endpoint/auth_register.yaml"
+    },
+
     "/cities": {
       "$ref": "./cities_endpoint/cities.yaml"
     },

@@ -50,7 +50,7 @@ def update_user(user_id):
     data = Crud.get('User', user_id)
     if data is None:
         return jsonify({'error': 'User not found'}), 404
-    fields_to_update = ['email', 'password', 'first_name', 'last_name', 'role']
+    fields_to_update = ['email', 'password', 'first_name', 'last_name']
     for field in fields_to_update:
         if datatoupdate.get(field):
             try:

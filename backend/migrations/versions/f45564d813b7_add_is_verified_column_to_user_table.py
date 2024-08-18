@@ -16,9 +16,18 @@ down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
+new_column = sa.Column('is_verified', sa.Boolean(), nullable=True)
+
 
 def upgrade():
-    op.add_column('users', sa.Column('is_verified', sa.Boolean(), nullable=False, server_default=sa.false()))
+    conn = op.get_bind()
+    inspector = sa.inspect(conn)
+
+    if 'users' in inspector.get_table_names():
+        columns = [col['name'] for col in inspector.get_columns('users')]
+
+        if 'is_verified' not in columns:
+            op.add_column('users', new_column)
 
 
 def downgrade() -> None:
